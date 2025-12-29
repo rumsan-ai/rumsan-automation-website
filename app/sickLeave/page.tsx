@@ -7,7 +7,7 @@ export default function SickLeavePage() {
     <main className="min-h-screen bg-[#020617] text-slate-50">
       {/* Navigation */}
       <nav className="border-b border-slate-800 bg-[#020617]/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="w-full px-4 py-8 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
             <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <div className="h-10 w-10 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
@@ -22,7 +22,7 @@ export default function SickLeavePage() {
       </nav>
 
       {/* Form Content */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
         <div className="max-w-2xl mx-auto">
           <SickLeaveForm />
         </div>

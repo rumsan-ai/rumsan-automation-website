@@ -25,22 +25,21 @@ export default function HomePage() {
       </nav>
 
       {/* Page Content */}
-      <section className="mx-auto max-w-480px-8 sm:px-10 lg:px-16 py-20">
-        {/* Header */}
-        <div className="text-center mb-16 max-w-5xl mx-auto">
-          <h1 className="text-5xl sm:text-6xl font-bold mb-6 text-balance">
-            Claims Portal
-          </h1>
-          <p className="text-xl sm:text-2xl text-slate-400 text-pretty">
-            Fast, simple, and reliable product support — all in one place
-          </p>
-        </div>
+      <section className="mx-auto max-w-480px-8 sm:px-10 lg:px-10">
 
         {/* Bigger Content Container */}
-        <div className="w-full max-w-480rounded-3xl bg-slate-900/70 border border-slate-800 p-16 sm:p-20 lg:p-24 mx-auto">
+        <div className="w-full max-w-480px-8 rounded-3xl bg-slate-900/70 border border-slate-800 sm:p-20 lg:p-20 mx-auto">
+      
+          <h4 className="text-5xl sm:text-6xl font-bold mb-6 text-balance">
+            Claims Portal
+          </h4>
           <ClaimsPortal />
         </div>
       </section>
+
+
+
+
 
       {/* Footer */}
       <footer className="border-t border-slate-800">
