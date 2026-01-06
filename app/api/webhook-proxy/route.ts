@@ -5,7 +5,8 @@ export async function POST(request: NextRequest) {
     const body = await request.formData()
 
     const targetUrl = body.get("targetUrl") as string
-    const webhookUrl = targetUrl || "https://n8n-webhook.rumsan.net/webhook/customer-support"
+    const defaultWebhookUrl = `${process.env.N8N_WEBHOOK_BASE_URL}${process.env.N8N_WEBHOOK_CUSTOMER_SUPPORT}`
+    const webhookUrl = targetUrl || defaultWebhookUrl
 
     // Remove targetUrl from formData before forwarding
     if (targetUrl) {

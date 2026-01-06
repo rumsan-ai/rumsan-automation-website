@@ -1,5 +1,5 @@
 import CVUploader from "@/components/cv-uploader"
-import { Zap } from "lucide-react"
+import { Zap, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export default function Home() {
@@ -25,7 +25,16 @@ export default function Home() {
       </nav>
 
       {/* Page Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back Arrow */}
+        <Link 
+          href="/"
+          className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors mb-3 group"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          <span className="text-sm font-medium">Back to Home</span>
+        </Link>
+        
         <CVUploader />
       </div>
     </main>

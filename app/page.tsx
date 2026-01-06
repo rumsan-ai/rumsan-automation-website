@@ -60,7 +60,7 @@ function HomePage() {
       shortDescription: "Your all-in-one Facebook AI assistant for real-time market updates, loans, and news.",
       fullDescription:
         "AskBhunte is a multimodal AI assistant integrated with Facebook Messenger. It delivers real-time updates on Forex, Stocks, Gold/Silver prices, Nepalese bank loan rates, and the latest news from The Kathmandu Post — all in one conversational interface.",
-      workflowUrl: "https://www.facebook.com/askbhunte",
+      workflowUrl: process.env.NEXT_PUBLIC_FACEBOOK_URL || "https://www.facebook.com/askbhunte",
       problems: [
         "Keeping track of gold, silver, stocks, and Forex prices in real-time is tedious.",
         "Manually checking loan rates from multiple Nepali banks is inefficient.",
@@ -195,8 +195,8 @@ function HomePage() {
         </div>
       </nav>
 
-      <main className="w-full px-4 py-30 sm:px-6 lg:px-8">
-        <div className="mb-20">
+      <main className="w-full px-4 pt-24 pb-8 sm:px-6 lg:px-8">
+        <div className="mb-12">
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-4xl mb-4">
             Intelligent Workflow Solutions
           </h1>
@@ -205,7 +205,7 @@ function HomePage() {
           </p>
         </div>
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {workflows.map((workflow) => (
             <Card
               key={workflow.id}
@@ -214,31 +214,31 @@ function HomePage() {
               {/* Gradient overlay on hover */}
               <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
-              <div className="absolute top-0 right-0 p-6 z-10">
-                <span className="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-400 ring-1 ring-inset ring-blue-500/30 backdrop-blur-sm">
+              <div className="absolute top-0 right-0 p-4 z-10">
+                <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2.5 py-1 text-xs font-semibold text-blue-400 ring-1 ring-inset ring-blue-500/30 backdrop-blur-sm">
                   {workflow.badge}
                 </span>
               </div>
               
-              <CardHeader className="p-8 relative z-10 grow">
-                <div className="mb-6 transform group-hover:scale-110 transition-transform duration-500">
+              <CardHeader className="p-6 relative z-10 grow">
+                <div className="mb-4 transform group-hover:scale-110 transition-transform duration-500">
                   <WorkflowIcon icon={workflow.icon} colorClass={workflow.iconColor} />
                 </div>
-                <CardTitle className="text-3xl font-bold text-slate-900 leading-tight mb-4 group-hover:text-blue-900 transition-colors">
+                <CardTitle className="text-2xl font-bold text-slate-900 leading-tight mb-3 group-hover:text-blue-900 transition-colors">
                   {workflow.title}
                 </CardTitle>
-                <CardDescription className="text-base text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors">
+                <CardDescription className="text-sm text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors">
                   {workflow.shortDescription}
                 </CardDescription>
               </CardHeader>
               
-              <CardContent className="px-8 pb-8 relative z-10 mt-auto">
+              <CardContent className="px-6 pb-6 relative z-10 mt-auto">
                 <Button
-                  className="w-full bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 border-0 text-white h-12 text-base font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300 group/btn"
+                  className="w-full bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 border-0 text-white h-11 text-sm font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300 group/btn"
                   onClick={() => setExpandedWorkflow(workflow.id)}
                 >
                   Explore Workflow 
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover/btn:translate-x-1" />
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
                 </Button>
               </CardContent>
             </Card>
@@ -248,28 +248,28 @@ function HomePage() {
 
       {/* Expanded Workflow Modal */}
       {expandedWorkflow && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xl z-50 flex items-center justify-center p-4 mt-10">
-          <Card className="h-[90vh] w-full max-w-4xl relative bg-white border-slate-200 shadow-2xl overflow-y-auto">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xl z-50 flex items-start justify-center p-4 pt-16">
+          <Card className="h-[95vh] w-full max-w-4xl relative bg-white border-slate-200 shadow-2xl overflow-y-auto rounded-xl">
             <button
               onClick={() => setExpandedWorkflow(null)}
-              className="absolute top-6 right-6 p-2 hover:bg-slate-100 rounded-full transition-colors z-10"
+              className="absolute top-4 right-4 p-2 hover:bg-slate-100 rounded-full transition-colors z-20 bg-white/80 backdrop-blur-sm shadow-sm"
             >
-              <X className="h-6 w-6 text-slate-600" />
+              <X className="h-5 w-5 text-slate-600" />
             </button>
-            <CardHeader className="p-10 border-b border-slate-200">
+            <CardHeader className="p-6 sm:p-8">
               <div className="flex items-center gap-4 mb-4">
                 <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 text-xs font-semibold ring-1 ring-blue-500/20">
                   {workflows.find((w) => w.id === expandedWorkflow)?.badge}
                 </span>
               </div>
-              <CardTitle className="text-4xl font-bold text-slate-900">
+              <CardTitle className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900">
                 {workflows.find((w) => w.id === expandedWorkflow)?.title}
               </CardTitle>
-              <CardDescription className="text-xl mt-4 text-slate-600 leading-relaxed">
+              <CardDescription className="text-base sm:text-lg lg:text-xl mt-4 text-slate-600 leading-relaxed">
                 {workflows.find((w) => w.id === expandedWorkflow)?.fullDescription}
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-8 space-y-6">
+            <CardContent className="p-4 sm:p-6 lg:p-8 space-y-6">
               
               {/* Problems & Use Cases for all workflows */}
               {(workflows.find((w) => w.id === expandedWorkflow)?.problems?.length ?? 0) > 0 && (
@@ -297,8 +297,8 @@ function HomePage() {
               {/* Key Steps */}
               {(workflows.find((w) => w.id === expandedWorkflow)?.steps?.length ?? 0) > 0 && (
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-4">User Manual Steps</h3>
-                  <div className="grid gap-3 sm:grid-cols-2">
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">User Manual Steps</h3>
+                  <div className="grid gap-3 sm:grid-cols-1 lg:grid-cols-2">
                     {workflows
                       .find((w) => w.id === expandedWorkflow)
                       ?.steps?.map((step, idx) => {
@@ -323,7 +323,7 @@ function HomePage() {
               {workflows.find((w) => w.id === expandedWorkflow)?.workflowUrl && (
                 <Button
                   size="lg"
-                  className="w-full h-16 text-xl font-semibold bg-blue-600 hover:bg-blue-500 text-white"
+                  className="w-full h-12 sm:h-14 lg:h-16 text-base sm:text-lg lg:text-xl font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-all duration-200"
                   asChild
                 >
                   <a
