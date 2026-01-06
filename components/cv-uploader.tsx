@@ -24,6 +24,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
 import {
   Upload,
   FileText,
@@ -390,6 +391,7 @@ export default function CVUploader() {
   const [selectedJobPosition, setSelectedJobPosition] = useState<string>(
     ""
   );
+  const { toast } = useToast();
 
   useEffect(() => {
     const loadSamplePDF = async () => {
@@ -418,7 +420,7 @@ export default function CVUploader() {
     loadSamplePDF();
   }, []);
 
-  const webhookUrl = "https://n8n-webhook.rumsan.net/webhook/cv-form";
+  const webhookUrl = `${process.env.NEXT_PUBLIC_N8N_WEBHOOK_BASE_URL}${process.env.NEXT_PUBLIC_N8N_WEBHOOK_CV_FORM}`;
 
   const acceptedTypes = [".pdf"];
   const maxFileSize = 10 * 1024 * 1024; // 10MB
@@ -1271,9 +1273,9 @@ export default function CVUploader() {
           </div>
         ) : (
           // Upload Layout - Two Columns
-          <div className="grid grid-cols-1 md:grid-cols-[45%_55%] gap-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-stretch">
               {/* Left Side - Job Requirements */}
-              <Card className="bg-white border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300 max-h-[calc(100vh-250px)] overflow-hidden flex flex-col">
+              <Card className="bg-white border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300 w-full max-h-125 min-h-100 overflow-hidden flex flex-col">
                 <CardHeader className="bg-linear-to-r from-blue-600 via-blue-700 to-indigo-600 shrink-0 py-1.5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
                   <div className="relative flex items-center gap-2">
@@ -1291,7 +1293,7 @@ export default function CVUploader() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-2 space-y-1 overflow-y-auto flex-1 bg-linear-to-b from-slate-50 to-white">
+                <CardContent className="p-2 space-y-1 bg-linear-to-b from-slate-50 to-white flex-1 overflow-y-auto">
                   <div className="shrink-0 bg-blue-50 p-1.5 rounded-lg border border-blue-200">
                     <div className="flex items-start gap-2 mb-1">
                       <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold shrink-0">1</div>
@@ -1352,7 +1354,7 @@ export default function CVUploader() {
               </Card>
 
               {/* Right Side - Upload Area */}
-              <Card className="bg-white border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300 max-h-[calc(100vh-250px)] overflow-hidden flex flex-col">
+              <Card className="bg-white border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300 w-full min-h-100">
                 <CardHeader className="bg-linear-to-r from-indigo-600 via-purple-600 to-purple-700 shrink-0 py-1.5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
                   <div className="relative flex items-center gap-2">
@@ -1537,19 +1539,21 @@ export default function CVUploader() {
                               </div>
                             )}
 
-                            {uploadedFile.status === "ready" && (
+                            {uploadedFile.status === "ready" && selectedJobPosition && (
                               <div className="mt-2 pt-2 border-t border-blue-100">
                                 <Button
                                   size="sm"
+                                  type="button"
                                   onClick={(e) => {
+                                    e.preventDefault();
                                     e.stopPropagation();
+                                    console.log("Button clicked!", { selectedJobPosition }); // Debug log
                                     handleIndividualSubmit(uploadedFile.id);
                                   }}
-                                  className="w-full h-9 bg-linear-to-r from-green-600 via-emerald-600 to-green-700 hover:from-green-700 hover:via-emerald-700 hover:to-green-800 shadow-lg hover:shadow-xl transition-all duration-300 text-sm font-bold rounded-lg group relative overflow-hidden"
+                                  className="w-full h-9 bg-linear-to-r from-green-600 via-emerald-600 to-green-700 hover:from-green-700 hover:via-emerald-700 hover:to-green-800 shadow-lg hover:shadow-xl transition-all duration-300 text-sm font-bold rounded-lg cursor-pointer pointer-events-auto"
                                 >
-                                  <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                                  <Send className="w-4 h-4 mr-1.5 relative z-10" />
-                                  <span className="relative z-10">Analyze CV</span>
+                                  <Send className="w-4 h-4 mr-1.5" />
+                                  <span>Analyze CV</span>
                                 </Button>
                               </div>
                             )}

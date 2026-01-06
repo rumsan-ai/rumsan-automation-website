@@ -9,7 +9,10 @@ export default function SickLeavePage() {
       <nav className="border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-40">
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
-            <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <Link
+              href="/"
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            >
               <div className="h-10 w-10 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <Zap className="h-6 w-6 text-white" />
               </div>
@@ -24,9 +27,20 @@ export default function SickLeavePage() {
       {/* Form Content */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
         <div className="max-w-2xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            {/* Back Arrow */}
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors group"
+            >
+              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <span className="text-sm font-medium">Back to Home</span>
+            </Link>
+            <div className="flex-1"></div>
+          </div>
           <SickLeaveForm />
         </div>
       </div>
     </main>
-  )
+  );
 }

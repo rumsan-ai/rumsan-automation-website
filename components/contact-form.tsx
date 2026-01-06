@@ -40,7 +40,7 @@ export function SickLeaveForm() {
     try {
       const formData = { employeeName, email, department, manager, startDate, endDate, reason, submittedAt: new Date().toISOString() }
       const response = await fetch(
-        "https://n8n-webhook.rumsan.net/webhook/sick-leave",
+        `${process.env.NEXT_PUBLIC_N8N_WEBHOOK_BASE_URL}${process.env.NEXT_PUBLIC_N8N_WEBHOOK_SICK_LEAVE}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

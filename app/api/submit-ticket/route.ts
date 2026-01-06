@@ -37,11 +37,6 @@ export async function POST(request: NextRequest) {
       })),
     }
 
-    // In a real implementation, you would:
-    // 1. Upload files to a storage service (Vercel Blob, S3, etc.)
-    // 2. Send the ticket data to your n8n webhook
-    // 3. Store ticket metadata in a database
-
     // Simulate n8n webhook response
     const n8nResponse = {
       success: true,
