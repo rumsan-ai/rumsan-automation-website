@@ -42,6 +42,7 @@ import {
   GraduationCap,
   Briefcase,
   Info,
+  ArrowLeft,
 } from "lucide-react";
 
 const parseEvaluationContent = (content: string) => {
@@ -256,7 +257,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
   };
 
   return (
-    <div className="prose prose-sm max-w-none bg-white rounded-lg p-6 border border-slate-200">
+    <div className="prose prose-sm max-w-none bg-white rounded-lg p-3 border border-slate-200">
       {renderMarkdown(content)}
     </div>
   );
@@ -387,7 +388,7 @@ export default function CVUploader() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [customJobRequirements, setCustomJobRequirements] = useState("");
   const [selectedJobPosition, setSelectedJobPosition] = useState<string>(
-    JOB_POSITIONS[0].id
+    ""
   );
 
   useEffect(() => {
@@ -443,7 +444,7 @@ export default function CVUploader() {
   const processFileWithWorkflow = async (fileId: string, file: File) => {
     try {
       console.log(
-        "[v0] Starting file upload to processing workflow:",
+        "Starting file upload to processing workflow:",
         webhookUrl
       );
 
@@ -455,6 +456,8 @@ export default function CVUploader() {
       const selectedPosition = JOB_POSITIONS.find(
         (pos) => pos.id === selectedJobPosition
       );
+      
+      // Always pass job title and requirements if a position is selected
       if (selectedPosition) {
         formData.append("jobTitle", selectedPosition.title);
         formData.append(
@@ -463,9 +466,9 @@ export default function CVUploader() {
         );
       }
 
-      // Pass custom job requirements if they exist
+      // Also pass custom job requirements if they exist (in addition to position requirements)
       if (customJobRequirements) {
-        formData.append("jobRequirements", customJobRequirements);
+        formData.append("customJobRequirements", customJobRequirements);
       }
 
       setFiles((prev) =>
@@ -479,7 +482,7 @@ export default function CVUploader() {
         credentials: "omit",
       });
 
-      console.log("[v0] Processing response status:", response.status);
+      console.log("Processing response status:", response.status);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -491,7 +494,7 @@ export default function CVUploader() {
 
       const responseText = await response.text();
       console.log(
-        "[v0] Raw response text:",
+        "Raw response text:",
         responseText.substring(0, 500) +
           (responseText.length > 500 ? "..." : "")
       );
@@ -504,7 +507,7 @@ export default function CVUploader() {
           .trim()
           .split("\n")
           .filter((line) => line.trim());
-        console.log("[v0] Found", lines.length, "JSON lines to parse");
+        console.log("Found", lines.length, "JSON lines to parse");
 
         let combinedContent = "";
         let metadata: any = null;
@@ -512,7 +515,7 @@ export default function CVUploader() {
         for (const line of lines) {
           try {
             const jsonObj = JSON.parse(line);
-            console.log("[v0] Parsed JSON object:", jsonObj);
+            console.log("Parsed JSON object:", jsonObj);
 
             if (jsonObj.type === "begin") {
               metadata = jsonObj.metadata;
@@ -526,7 +529,7 @@ export default function CVUploader() {
             }
           } catch (lineError) {
             console.log(
-              "[v0] Failed to parse line as JSON:",
+              "Failed to parse line as JSON:",
               line.substring(0, 100)
             );
           }
@@ -535,7 +538,7 @@ export default function CVUploader() {
         // If we have combined content, try to parse it as the final result
         if (combinedContent.trim()) {
           console.log(
-            "[v0] Combined content:",
+            "Combined content:",
             combinedContent.substring(0, 200) + "..."
           );
 
@@ -572,13 +575,13 @@ export default function CVUploader() {
           };
         }
 
-        console.log("[v0] Final processed result:", result);
-        console.log("[v0] Evaluation data:", result.evaluation);
-        console.log("[v0] Skills:", result.skills);
-        console.log("[v0] Experience:", result.experience);
-        console.log("[v0] Education:", result.education);
+        console.log("Final processed result:", result);
+        console.log("Evaluation data:", result.evaluation);
+        console.log("Skills:", result.skills);
+        console.log("Experience:", result.experience);
+        console.log("Education:", result.education);
       } catch (parseError) {
-        console.error("[v0] Error parsing NDJSON response:", parseError);
+        console.error("Error parsing NDJSON response:", parseError);
 
         // Fallback: create a basic result structure
         result = {
@@ -607,7 +610,7 @@ export default function CVUploader() {
 
       setActiveTab("preview");
     } catch (error) {
-      console.error("[v0] Error processing file:", error);
+      console.error("Error processing file:", error);
 
       let errorMessage = "Unknown error occurred";
 
@@ -731,69 +734,69 @@ export default function CVUploader() {
     //   : JOB_REQUIREMENTS.requirements
 
     return (
-      <div className="space-y-6">
-        <div className="grid gap-6">
+      <div className="space-y-0.5">
+        <div className="grid gap-0.5">
           {data.personalInfo && (
-            <Card className="border-slate-700 shadow-xl bg-slate-900">
-              <CardHeader className="border-b border-slate-700 bg-slate-800/50">
-                <CardTitle className="flex items-center gap-2 text-slate-100">
-                  <div className="p-2 bg-slate-700 rounded-lg">
-                    <MapPin className="w-5 h-5 text-slate-300" />
+            <Card className="border-slate-200 shadow-lg bg-white">
+              <CardHeader className="border-b border-slate-200 bg-slate-50 py-3">
+                <CardTitle className="flex items-center gap-2 text-slate-900 text-sm">
+                  <div className="p-1.5 bg-slate-100 rounded-lg">
+                    <MapPin className="w-4 h-4 text-slate-700" />
                   </div>
                   Personal Information
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="p-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {data.personalInfo.name && (
-                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-blue-600 font-semibold">
+                    <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span className="text-blue-600 font-semibold text-sm">
                           {data.personalInfo.name.charAt(0).toUpperCase()}
                         </span>
                       </div>
                       <div>
-                        <div className="font-semibold text-slate-900">
+                        <div className="font-semibold text-slate-900 text-sm">
                           {data.personalInfo.name}
                         </div>
-                        <div className="text-sm text-slate-600">Full Name</div>
+                        <div className="text-xs text-slate-600">Full Name</div>
                       </div>
                     </div>
                   )}
                   {data.personalInfo.email && (
-                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
-                      <Mail className="w-5 h-5 text-slate-600" />
+                    <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                      <Mail className="w-4 h-4 text-slate-600" />
                       <div>
-                        <div className="font-semibold text-slate-900">
+                        <div className="font-semibold text-slate-900 text-sm">
                           {data.personalInfo.email}
                         </div>
-                        <div className="text-sm text-slate-600">
+                        <div className="text-xs text-slate-600">
                           Email Address
                         </div>
                       </div>
                     </div>
                   )}
                   {data.personalInfo.phone && (
-                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
-                      <Phone className="w-5 h-5 text-slate-600" />
+                    <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                      <Phone className="w-4 h-4 text-slate-600" />
                       <div>
-                        <div className="font-semibold text-slate-900">
+                        <div className="font-semibold text-slate-900 text-sm">
                           {data.personalInfo.phone}
                         </div>
-                        <div className="text-sm text-slate-600">
+                        <div className="text-xs text-slate-600">
                           Phone Number
                         </div>
                       </div>
                     </div>
                   )}
                   {data.personalInfo.location && (
-                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
-                      <MapPin className="w-5 h-5 text-slate-600" />
+                    <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                      <MapPin className="w-4 h-4 text-slate-600" />
                       <div>
-                        <div className="font-semibold text-slate-900">
+                        <div className="font-semibold text-slate-900 text-sm">
                           {data.personalInfo.location}
                         </div>
-                        <div className="text-sm text-slate-600">Location</div>
+                        <div className="text-xs text-slate-600">Location</div>
                       </div>
                     </div>
                   )}
@@ -804,24 +807,24 @@ export default function CVUploader() {
 
           {data.skills && data.skills.length > 0 && (
             <Card className="border-green-200 shadow-lg hover:shadow-xl transition-all duration-300">
-              <CardHeader className="border-b border-green-100 bg-linear-to-r from-green-50 to-emerald-50">
-                <CardTitle className="flex items-center gap-2 text-green-900">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Award className="w-5 h-5 text-green-600" />
+              <CardHeader className="border-b border-green-100 bg-linear-to-r from-green-50 to-emerald-50 py-3">
+                <CardTitle className="flex items-center gap-2 text-green-900 text-sm">
+                  <div className="p-1.5 bg-green-100 rounded-lg">
+                    <Award className="w-4 h-4 text-green-600" />
                   </div>
                   Skills & Competencies
-                  <Badge className="ml-2 bg-green-100 text-green-700">
+                  <Badge className="ml-2 bg-green-100 text-green-700 text-xs">
                     {data.skills.length}
                   </Badge>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-6">
-                <div className="flex flex-wrap gap-3">
+              <CardContent className="pt-3 pb-3">
+                <div className="flex flex-wrap gap-2">
                   {data.skills.map((skill, index) => (
                     <Badge
                       key={index}
                       variant="secondary"
-                      className="bg-linear-to-r from-green-100 to-emerald-100 text-green-800 hover:from-green-200 hover:to-emerald-200 px-4 py-2 text-sm shadow-sm hover:shadow-md transition-all duration-300 border border-green-200"
+                      className="bg-linear-to-r from-green-100 to-emerald-100 text-green-800 hover:from-green-200 hover:to-emerald-200 px-2 py-1 text-xs shadow-sm hover:shadow-md transition-all duration-300 border border-green-200"
                     >
                       {skill}
                     </Badge>
@@ -933,51 +936,47 @@ export default function CVUploader() {
 
           {data.evaluation && (
             <Card className="border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
-              <CardHeader className="border-b border-slate-200 bg-linear-to-r from-slate-50 to-blue-50">
-                <CardTitle className="flex items-center gap-2 text-slate-800">
-                  <div className="p-2 bg-slate-100 rounded-lg">
-                    <FileText className="w-5 h-5 text-slate-600" />
+              <CardHeader className="border-b border-slate-200 bg-linear-to-r from-slate-50 to-blue-50 py-2">
+                <CardTitle className="flex items-center gap-2 text-slate-800 text-sm">
+                  <div className="p-1.5 bg-slate-100 rounded-lg">
+                    <FileText className="w-4 h-4 text-slate-600" />
                   </div>
                   Evaluation Summary
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6 pt-6">
+              <CardContent className="space-y-1 pt-1 pb-0">
                 {data.evaluation.decision && (
                   <div
-                    className={`p-6 rounded-xl border-2 shadow-md ${
+                    className={`p-2 rounded-lg border-2 shadow-sm ${
                       data.evaluation.decision === "Accept"
                         ? "bg-linear-to-r from-green-50 to-emerald-50 border-green-300"
                         : "bg-linear-to-r from-red-50 to-rose-50 border-red-300"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                       <div
-                        className={`p-3 rounded-full ${
+                        className={`p-1.5 rounded-full ${
                           data.evaluation.decision === "Accept"
                             ? "bg-green-100"
                             : "bg-red-100"
                         }`}
                       >
                         {data.evaluation.decision === "Accept" ? (
-                          <CheckCircle className="w-7 h-7 text-green-600" />
+                          <CheckCircle className="w-4 h-4 text-green-600" />
                         ) : (
-                          <AlertCircle className="w-7 h-7 text-red-600" />
+                          <AlertCircle className="w-4 h-4 text-red-600" />
                         )}
                       </div>
                       <div>
                         <h3
-                          className={`text-2xl font-bold ${
+                          className={`text-base font-bold ${
                             data.evaluation.decision === "Accept"
                               ? "text-green-900"
                               : "text-red-900"
                           }`}
                         >
-                          Final Decision:{" "}
-                          {data.evaluation.decision || "Pending"}
+                          Decision: {data.evaluation.decision || "Pending"}
                         </h3>
-                        <p className="text-sm text-slate-600 mt-1">
-                          AI Recommendation Result
-                        </p>
                       </div>
                     </div>
                   </div>
@@ -1026,9 +1025,19 @@ export default function CVUploader() {
             yPosition = 20;
           }
           doc.text(line, margin, yPosition);
-          yPosition += fontSize * 0.5;
+          yPosition += fontSize * 0.6;
         });
-        yPosition += 5;
+        yPosition += 3;
+      };
+
+      // Helper function to properly format markdown content
+      const formatMarkdownForPDF = (content: string): string => {
+        return content
+          .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markers
+          .replace(/^#{1,6}\s+/gm, '') // Remove heading markers
+          .replace(/^[-*+]\s+/gm, '• ') // Convert list markers to bullets
+          .replace(/\n{3,}/g, '\n\n') // Reduce multiple line breaks
+          .trim();
       };
 
       // Title
@@ -1058,24 +1067,25 @@ export default function CVUploader() {
       // Evaluation Reasons
       if (data.evaluation?.evaluationReasons) {
         addText("EVALUATION SUMMARY", 12, true);
-        addText(data.evaluation.evaluationReasons, 10, false);
-      }
-
-      // Job Requirements
-      const selectedPosition = JOB_POSITIONS.find(
-        (pos) => pos.id === selectedJobPosition
-      );
-      const jobRequirementsToDisplay = customJobRequirements
-        ? customJobRequirements
-            .split("\n")
-            .map((line) => line.trim())
-            .filter(Boolean)
-        : selectedPosition?.requirements || [];
-
-      if (jobRequirementsToDisplay.length > 0) {
-        addText("JOB REQUIREMENTS", 12, true);
-        jobRequirementsToDisplay.forEach((req) => {
-          addText(`• ${req}`, 10, false);
+        const formattedContent = formatMarkdownForPDF(data.evaluation.evaluationReasons);
+        
+        // Split content into paragraphs and format properly
+        const paragraphs = formattedContent.split('\n\n');
+        paragraphs.forEach((paragraph) => {
+          if (paragraph.trim()) {
+            if (paragraph.startsWith('•')) {
+              // Handle bullet points
+              addText(paragraph, 10, false);
+            } else if (paragraph.toLowerCase().includes('strengths') || 
+                      paragraph.toLowerCase().includes('weaknesses') ||
+                      paragraph.toLowerCase().includes('recommendation')) {
+              // Handle section headers
+              addText(paragraph, 11, true);
+            } else {
+              // Regular content
+              addText(paragraph, 10, false);
+            }
+          }
         });
       }
 
@@ -1133,66 +1143,180 @@ export default function CVUploader() {
   };
 
   return (
-    <div className="h-80 bg-[#020617]">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent mb-2 ">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-350 mx-auto px-4 space-y-2">
+        <div className="text-center mb-2">
+          <h1 className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-1">
             AI-Powered CV Evaluation
           </h1>
-          <p className="text-slate-400 text-lg">
-            Upload your CV and get instant AI-driven insights and
-            recommendations
+          <p className="text-slate-700 text-sm font-medium mb-2">
+            Get professional feedback in 3 steps
           </p>
+          
+          {/* Progress Bar */}
+          <div className="max-w-2xl mx-auto mb-3">
+            <div className="flex items-center justify-between mb-2 relative px-4">
+              <div className={`flex flex-col items-center gap-1 ${selectedJobPosition ? 'text-blue-600' : 'text-slate-400'} z-10 relative`}>
+                <div className={`w-7 h-7 rounded-full ${selectedJobPosition ? 'bg-blue-600' : 'bg-slate-300'} text-white flex items-center justify-center transition-all shadow-sm`}>
+                  {selectedJobPosition ? (
+                    <CheckCircle className="w-4 h-4" />
+                  ) : (
+                    <Briefcase className="w-4 h-4" />
+                  )}
+                </div>
+                <span className="text-[11px] font-medium text-center">Choose Position</span>
+              </div>
+              <div className={`flex flex-col items-center gap-1 ${files.length > 0 ? 'text-indigo-600' : 'text-slate-400'} z-10 relative`}>
+                <div className={`w-7 h-7 rounded-full ${files.length > 0 ? 'bg-indigo-600' : 'bg-slate-300'} text-white flex items-center justify-center transition-all shadow-sm`}>
+                  {files.length > 0 ? (
+                    <CheckCircle className="w-4 h-4" />
+                  ) : (
+                    <Upload className="w-4 h-4" />
+                  )}
+                </div>
+                <span className="text-[11px] font-medium text-center">Upload CV</span>
+              </div>
+              <div className={`flex flex-col items-center gap-1 ${files.some(f => f.status === 'success') ? 'text-purple-600' : 'text-slate-400'} z-10 relative`}>
+                <div className={`w-7 h-7 rounded-full ${files.some(f => f.status === 'success') ? 'bg-purple-600' : 'bg-slate-300'} text-white flex items-center justify-center transition-all shadow-sm`}>
+                  {files.some(f => f.status === 'success') ? (
+                    <CheckCircle className="w-4 h-4" />
+                  ) : (
+                    <Award className="w-4 h-4" />
+                  )}
+                </div>
+                <span className="text-[11px] font-medium text-center">Get Results</span>
+              </div>
+              {/* Progress bar - only show background when there's progress */}
+              {selectedJobPosition && files.length > 0 && (
+                <div className="absolute top-3.5 z-0" style={{ left: '45px', right: '45px' }}>
+                  <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                    <div 
+                      className="h-full bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 transition-all duration-500 ease-out rounded-full"
+                      style={{
+                        width: `${files.some(f => f.status === 'success') ? 100 : 50}%`
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="">
-          <TabsList className=" mx-auto bg-slate-900 shadow-lg border border-slate-700 p-1 w-full mb-6">
-            <TabsTrigger
-              value="upload"
-              className=" text-slate-300 data-[state=active]:bg-linear-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white transition-all duration-300 "
-            >
-              <Upload className="w-4 h-4 mr-2" />
-              Upload CV
-            </TabsTrigger>
-            <TabsTrigger
-              value="preview"
-              className="  text-slate-300 data-[state=active]:bg-linear-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white transition-all duration-300"
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              Preview & Analysis
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="upload" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        {successfulFiles.length > 0 ? (
+          // Results Layout - Full Width
+          <div className="w-full">
+            <Card className="bg-white border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300 max-h-[calc(100vh-200px)] overflow-hidden flex flex-col">
+              <CardHeader className="bg-linear-to-r from-purple-600 via-purple-700 to-indigo-600 py-4 shrink-0">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <Button
+                      onClick={() => setFiles([])}
+                      variant="ghost"
+                      size="sm"
+                      className="p-2 bg-white/20 hover:bg-white/30 text-white border-none transition-all rounded-lg"
+                    >
+                      <ArrowLeft className="w-5 h-5" />
+                    </Button>
+                    <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                      <FileText className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-white text-xl font-bold">
+                        AI Analysis Results
+                      </CardTitle>
+                      <CardDescription className="text-purple-100 text-sm font-medium mt-1">
+                        Comprehensive evaluation and insights
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    {successfulFiles.map((file) => (
+                      <Button
+                        key={file.id}
+                        onClick={() => downloadPreviewData(file)}
+                        variant="secondary"
+                        size="sm"
+                        className="bg-white/20 hover:bg-white/30 text-white border-white/20 hover:border-white/40 transition-all"
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Download Report
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-3 overflow-y-auto flex-1">
+                <div className="space-y-2">
+                  {successfulFiles.map((file) => (
+                    <div key={file.id}>
+                      <div className="mb-1 p-1.5 bg-purple-50 rounded-lg border border-purple-200">
+                        <h4 className="font-semibold text-purple-900 text-sm">
+                          📄 {file.file.name}
+                        </h4>
+                      </div>
+                      {file.parsedData ? (
+                        renderParsedData(file.parsedData)
+                      ) : (
+                        <div className="p-3 bg-slate-50 rounded-lg text-slate-600">
+                          No analysis data available for this file
+                        </div>
+                      )}
+                      {successfulFiles.length > 1 && <Separator className="mt-4" />}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        ) : (
+          // Upload Layout - Two Columns
+          <div className="grid grid-cols-1 md:grid-cols-[45%_55%] gap-3">
               {/* Left Side - Job Requirements */}
-              <Card className="bg-slate-800/90 border-slate-700 shadow-2xl backdrop-blur-sm  h-120 overflow-hidden flex flex-col">
-                <CardHeader className="bg-linear-to-r from-blue-600 to-indigo-600 rounded-t-lg shrink-0">
-                  <CardTitle className="text-white text-lg">
-                    {JOB_POSITIONS.find((p) => p.id === selectedJobPosition)
-                      ?.title || "Select Job Position"}
-                  </CardTitle>
-                  <CardDescription className="text-blue-100 text-sm">
-                    Requirements
-                  </CardDescription>
+              <Card className="bg-white border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300 max-h-[calc(100vh-250px)] overflow-hidden flex flex-col">
+                <CardHeader className="bg-linear-to-r from-blue-600 via-blue-700 to-indigo-600 shrink-0 py-1.5 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
+                  <div className="relative flex items-center gap-2">
+                    <div className="p-1 bg-white/20 backdrop-blur-sm rounded-lg">
+                      <Briefcase className="w-3 h-3 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <CardTitle className="text-white text-sm font-bold leading-tight">
+                        {JOB_POSITIONS.find((p) => p.id === selectedJobPosition)
+                          ?.title || "Job Requirements"}
+                      </CardTitle>
+                      <CardDescription className="text-blue-100 text-[10px] font-medium">
+                        {selectedJobPosition ? "Review requirements below" : "Select position to begin"}
+                      </CardDescription>
+                    </div>
+                  </div>
                 </CardHeader>
-                <CardContent className="p-4 space-y-4 overflow-y-auto flex-1">
-                  <div className="shrink-0">
-                    <label className="block text-sm font-medium text-slate-200 mb-2">
-                      Select Job Position
-                    </label>
+                <CardContent className="p-2 space-y-1 overflow-y-auto flex-1 bg-linear-to-b from-slate-50 to-white">
+                  <div className="shrink-0 bg-blue-50 p-1.5 rounded-lg border border-blue-200">
+                    <div className="flex items-start gap-2 mb-1">
+                      <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold shrink-0">1</div>
+                      <div>
+                        <label className="block text-base font-bold text-slate-800 mb-0.5">
+                          Step 1: Choose Job Position
+                        </label>
+                        <p className="text-sm text-slate-600 mb-1">
+                          Select the role you're applying for
+                        </p>
+                      </div>
+                    </div>
                     <Select
                       value={selectedJobPosition}
                       onValueChange={setSelectedJobPosition}
                     >
-                      <SelectTrigger className="w-full bg-slate-700 border-slate-600 text-slate-100">
-                        <SelectValue placeholder="Choose a job position" />
+                      <SelectTrigger className="w-full bg-white border-slate-300 text-slate-900 text-sm">
+                        <SelectValue placeholder="Select Job Position" />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-700 border-slate-600">
+                      <SelectContent className="bg-white border-slate-200">
                         {JOB_POSITIONS.map((position) => (
                           <SelectItem
                             key={position.id}
                             value={position.id}
-                            className="text-slate-100 focus:bg-slate-600 focus:text-white"
+                            className="text-slate-900 focus:bg-slate-100 focus:text-slate-900 text-sm"
                           >
                             {position.title}
                           </SelectItem>
@@ -1202,76 +1326,108 @@ export default function CVUploader() {
                   </div>
 
                   {/* Job Requirements List */}
-                  <div className="space-y-3">
-                    {JOB_POSITIONS.find(
-                      (p) => p.id === selectedJobPosition
-                    )?.requirements.map((req, index) => (
-                      <div key={index} className="flex gap-3 items-start">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0" />
-                        <p className="text-sm text-slate-300 leading-relaxed">
-                          {req}
-                        </p>
+                  <div className="space-y-1">
+                    {selectedJobPosition ? (
+                      JOB_POSITIONS.find(
+                        (p) => p.id === selectedJobPosition
+                      )?.requirements.map((req, index) => (
+                        <div key={index} className="flex gap-2 items-start p-2 bg-white rounded border border-slate-100 hover:border-blue-200 hover:bg-blue-50 transition-all duration-200">
+                          <div className="w-2 h-2 rounded-full bg-linear-to-br from-blue-600 to-indigo-600 mt-1.5 shrink-0" />
+                          <p className="text-sm text-slate-800 leading-relaxed">
+                            {req}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex items-center justify-center py-4 text-slate-400">
+                        <div className="text-center">
+                          <Briefcase className="w-6 h-6 mx-auto mb-1 text-slate-300" />
+                          <p className="text-sm font-medium">Please select a job position above</p>
+                          <p className="text-xs mt-0.5">Requirements will appear here</p>
+                        </div>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </CardContent>
               </Card>
 
               {/* Right Side - Upload Area */}
-              <div className="flex flex-col space-y-4">
-                <div
-                  className={`
+              <Card className="bg-white border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300 max-h-[calc(100vh-250px)] overflow-hidden flex flex-col">
+                <CardHeader className="bg-linear-to-r from-indigo-600 via-purple-600 to-purple-700 shrink-0 py-1.5 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
+                  <div className="relative flex items-center gap-2">
+                    <div className="p-1 bg-white/20 backdrop-blur-sm rounded-lg">
+                      <Upload className="w-3 h-3 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <CardTitle className="text-white text-sm font-bold leading-tight">
+                        Upload Your CV
+                      </CardTitle>
+                      <CardDescription className="text-purple-100 text-[10px] font-medium">
+                        Upload your own CV or process with the sample provided below
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-2 space-y-1 flex-1 bg-linear-to-b from-slate-50 to-white overflow-y-auto">
+                  <div
+                    className={`
                         relative border-2 border-dashed rounded-xl transition-all duration-300 cursor-pointer
                         ${
                           isDragOver
-                            ? "border-blue-500 bg-blue-950/50"
-                            : "border-slate-600 hover:border-blue-500 hover:bg-slate-800/50"
+                            ? "border-blue-500 bg-blue-50 shadow-lg scale-105"
+                            : "border-slate-300 hover:border-blue-400 hover:bg-slate-50 hover:shadow-md"
                         }
                       `}
-                  onDrop={handleDrop}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                >
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    // Removed multiple attribute
-                    // multiple
-                    accept=".pdf"
-                    onChange={handleFileSelect}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                  />
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                  >
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      // Removed multiple attribute
+                      // multiple
+                      accept=".pdf"
+                      onChange={handleFileSelect}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
 
-                  <div className="p-6 space-y-3 pointer-events-none">
-                    <div className="mx-auto w-14 h-14 bg-linear-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                      <Upload className="w-7 h-7 text-white" />
-                    </div>
+                    <div className="p-3 space-y-1.5 pointer-events-none">
+                      <div className="flex items-center justify-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold">2</div>
+                        <h3 className="text-base font-bold text-slate-900">
+                          Step 2: Upload Your CV
+                        </h3>
+                      </div>
+                      <div className="mx-auto w-10 h-10 bg-linear-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <Upload className="w-5 h-5 text-white" />
+                      </div>
 
-                    <div className="text-center">
-                      <h3 className="text-lg font-bold text-slate-100 mb-1">
-                        Drop your CV here
-                      </h3>
-                      <p className="text-slate-300 text-sm">
-                        or click to browse files
-                      </p>
-                      <p className="text-slate-400 text-xs mt-1">
-                        PDF (Max: 10MB)
-                      </p>
-                    </div>
+                      <div className="text-center">
+                        <p className="text-slate-700 text-sm font-semibold mb-0.5">
+                          Drag & drop here
+                        </p>
+                        <p className="text-slate-600 text-sm mb-1">
+                          or click button below
+                        </p>
+                        <p className="text-slate-500 text-sm bg-slate-100 inline-block px-2 py-0.5 rounded-full">
+                          PDF • Max 10MB
+                        </p>
+                      </div>
 
-                    <div className="flex justify-center">
-                      <Button
-                        onClick={() => fileInputRef.current?.click()}
-                        size="lg"
-                        className="bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg pointer-events-auto"
-                      >
-                        <Upload className="w-5 h-5 mr-2" />
-                        {/* Changed text to "Choose File" */}
-                        Choose File
-                      </Button>
+                      <div className="flex justify-center">
+                        <Button
+                          onClick={() => fileInputRef.current?.click()}
+                          size="sm"
+                          className="bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 pointer-events-auto font-semibold text-sm h-8"
+                        >
+                          <Upload className="w-4 h-4 mr-1.5" />
+                          Choose File
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
 
                 {/* File List */}
                 {files.length > 0 && (
@@ -1279,52 +1435,58 @@ export default function CVUploader() {
                     {files.map((uploadedFile) => (
                       <div
                         key={uploadedFile.id}
-                        className="border border-slate-700 rounded-lg p-4 bg-slate-800/80 hover:bg-slate-800 hover:shadow-lg transition-all duration-300 pointer-events-auto relative z-20"
+                        className="border-2 border-blue-200 rounded-xl p-3 bg-linear-to-br from-blue-50 via-white to-indigo-50 hover:border-blue-400 hover:shadow-2xl transition-all duration-300 pointer-events-auto relative overflow-hidden group"
                       >
-                        <div className="flex items-start gap-4">
-                          <div className="p-2.5 bg-blue-900/50 rounded-lg shrink-0">
-                            <FileText className="w-5 h-5 text-blue-400" />
+                        {/* Decorative background element */}
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-blue-400/10 to-indigo-400/10 rounded-full -mr-16 -mt-16"></div>
+                        
+                        <div className="flex items-center gap-3 relative z-10">
+                          <div className="p-2.5 bg-linear-to-br from-blue-600 to-indigo-700 rounded-xl shrink-0 shadow-lg">
+                            <FileText className="w-5 h-5 text-white" />
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-center justify-between gap-4">
                               <div className="flex-1 min-w-0">
-                                <p className="font-semibold text-sm text-slate-100 truncate">
+                                <p className="font-bold text-base text-slate-900 truncate mb-1">
                                   {uploadedFile.file.name}
                                 </p>
-                                <div className="flex items-center gap-2 mt-1">
-                                  <p className="text-xs text-slate-400">
-                                    {(
-                                      uploadedFile.file.size /
-                                      1024 /
-                                      1024
-                                    ).toFixed(2)}{" "}
-                                    MB
-                                  </p>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <div className="flex items-center gap-1">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                                    <span className="text-xs text-slate-600 font-medium">
+                                      {(
+                                        uploadedFile.file.size /
+                                        1024 /
+                                        1024
+                                      ).toFixed(2)}{" "}
+                                      MB
+                                    </span>
+                                  </div>
                                   {uploadedFile.status === "success" && (
-                                    <Badge className="bg-green-900/50 text-green-300 border-green-700 text-xs px-2 py-0">
-                                      Ready
+                                    <Badge className="bg-linear-to-r from-green-500 to-emerald-600 text-white text-[10px] px-2 py-0.5 font-bold shadow-md">
+                                      ✓ Ready
                                     </Badge>
                                   )}
                                   {uploadedFile.status === "uploading" && (
-                                    <Badge className="bg-blue-900/50 text-blue-300 border-blue-700 text-xs px-2 py-0">
-                                      Processing...
+                                    <Badge className="bg-linear-to-r from-blue-500 to-indigo-600 text-white text-[10px] px-2 py-0.5 font-bold animate-pulse shadow-md">
+                                      ⟳ Processing...
                                     </Badge>
                                   )}
                                   {uploadedFile.status === "ready" && (
-                                    <Badge className="bg-amber-900/50 text-amber-300 border-amber-700 text-xs px-2 py-0">
-                                      Ready
+                                    <Badge className="bg-linear-to-r from-orange-500 to-amber-600 text-white text-[10px] px-2 py-0.5 font-bold shadow-md">
+                                      ⚡ Ready
                                     </Badge>
                                   )}
                                   {uploadedFile.status === "error" && (
-                                    <Badge className="bg-red-900/50 text-red-300 border-red-700 text-xs px-2 py-0">
-                                      Error
+                                    <Badge className="bg-linear-to-r from-red-500 to-rose-600 text-white text-[10px] px-2 py-0.5 font-bold shadow-md">
+                                      ✕ Error
                                     </Badge>
                                   )}
                                 </div>
                               </div>
 
-                              <div className="flex items-center gap-1.5 shrink-0">
+                              <div className="flex items-center gap-2 shrink-0">
                                 {uploadedFile.file.type ===
                                   "application/pdf" && (
                                   <Button
@@ -1337,23 +1499,10 @@ export default function CVUploader() {
                                       );
                                       window.open(fileUrl, "_blank");
                                     }}
-                                    className="h-8 w-8 p-0 hover:bg-slate-700 hover:text-blue-400 transition-colors"
+                                    className="h-8 w-8 p-0 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-all rounded-lg shadow-sm hover:shadow-md"
                                     title="Preview PDF"
                                   >
                                     <Eye className="w-4 h-4" />
-                                  </Button>
-                                )}
-                                {uploadedFile.status === "ready" && (
-                                  <Button
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleIndividualSubmit(uploadedFile.id);
-                                    }}
-                                    className="h-8 px-3 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg transition-all duration-300 text-xs"
-                                  >
-                                    <Send className="w-3.5 h-3.5 mr-1.5" />
-                                    Process
                                   </Button>
                                 )}
                                 <Button
@@ -1363,7 +1512,7 @@ export default function CVUploader() {
                                     e.stopPropagation();
                                     removeFile(uploadedFile.id);
                                   }}
-                                  className="h-8 w-8 p-0 hover:bg-red-900/50 hover:text-red-400 transition-colors"
+                                  className="h-8 w-8 p-0 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 transition-all rounded-lg shadow-sm hover:shadow-md"
                                   title="Remove file"
                                 >
                                   <X className="w-4 h-4" />
@@ -1372,30 +1521,37 @@ export default function CVUploader() {
                             </div>
 
                             {uploadedFile.status === "uploading" && (
-                              <div className="mt-3 space-y-2 bg-blue-950/50 rounded-md p-3 border border-blue-800">
+                              <div className="mt-2 space-y-1 bg-blue-50 rounded-lg p-2 border-2 border-blue-200">
                                 <div className="flex items-center justify-between">
-                                  <p className="text-xs font-medium text-blue-200">
+                                  <p className="text-xs font-medium text-blue-700">
                                     Processing CV...
                                   </p>
-                                  <p className="text-xs font-bold text-blue-400">
+                                  <p className="text-xs font-bold text-blue-800">
                                     {Math.round(uploadedFile.progress)}%
                                   </p>
                                 </div>
                                 <Progress
                                   value={uploadedFile.progress}
-                                  className="h-2 bg-blue-900"
+                                  className="h-1.5 bg-blue-200"
                                 />
                               </div>
                             )}
 
                             {uploadedFile.status === "ready" && (
-                              <Alert className="mt-3 bg-amber-950/50 border-amber-800 py-2 px-3">
-                                <Upload className="h-3.5 w-3.5 text-amber-400" />
-                                <AlertDescription className="text-slate-300 text-xs">
-                                  CV ready to process. Click the Process button
-                                  to analyze your CV.
-                                </AlertDescription>
-                              </Alert>
+                              <div className="mt-2 pt-2 border-t border-blue-100">
+                                <Button
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleIndividualSubmit(uploadedFile.id);
+                                  }}
+                                  className="w-full h-9 bg-linear-to-r from-green-600 via-emerald-600 to-green-700 hover:from-green-700 hover:via-emerald-700 hover:to-green-800 shadow-lg hover:shadow-xl transition-all duration-300 text-sm font-bold rounded-lg group relative overflow-hidden"
+                                >
+                                  <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                                  <Send className="w-4 h-4 mr-1.5 relative z-10" />
+                                  <span className="relative z-10">Analyze CV</span>
+                                </Button>
+                              </div>
                             )}
 
                             {uploadedFile.status === "error" &&
@@ -1413,59 +1569,10 @@ export default function CVUploader() {
                     ))}
                   </div>
                 )}
-              </div>
+                </CardContent>
+              </Card>
             </div>
-          </TabsContent>
-
-          <TabsContent value="preview" className="space-y-6">
-            {successfulFiles.map((uploadedFile) => (
-              <Card
-                key={uploadedFile.id}
-                className="bg-slate-900 border border-slate-700 shadow-xl"
-              >
-                <CardHeader className="border-b border-slate-700 bg-slate-800/50">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2 text-slate-100">
-                      <div className="p-2 bg-blue-900/50 rounded-lg">
-                        <Eye className="w-5 h-5 text-blue-400" />
-                      </div>
-                      CV Analysis Results - {uploadedFile.file.name}
-                    </CardTitle>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => downloadPreviewData(uploadedFile)}
-                      className="border-blue-600 text-blue-400 hover:bg-blue-950 shadow-sm hover:shadow-md transition-all duration-300"
-                    >
-                      <Download className="w-4 h-4 mr-2" />
-                      Download Report
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6 pt-6 bg-slate-900">
-                  {renderParsedData(uploadedFile.parsedData)}
-                </CardContent>
-              </Card>
-            ))}
-
-            {successfulFiles.length === 0 && (
-              <Card className="border-blue-700 shadow-xl bg-slate-900">
-                <CardContent className="p-12 text-center">
-                  <div className="mx-auto w-20 h-20 bg-blue-900/50 rounded-full flex items-center justify-center mb-4">
-                    <Info className="h-10 w-10 text-blue-400" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-slate-100 mb-2">
-                    No Processed CVs Yet
-                  </h3>
-                  <p className="text-slate-400">
-                    Upload and process some CVs in the Upload tab to see
-                    analysis results here.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-        </Tabs>
+        )}
       </div>
     </div>
   );

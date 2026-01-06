@@ -19,9 +19,13 @@ import {
   Code,
   GitBranch,
   ShieldCheck,
+  Target,
+  Package,
+  MessageSquare,
 } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
+import React from "react"
 
 const WorkflowIcon = ({ icon: Icon, colorClass }: { icon: any; colorClass: string }) => (
   <div className={`h-12 w-12 rounded-xl border flex items-center justify-center ${colorClass}`}>
@@ -31,6 +35,20 @@ const WorkflowIcon = ({ icon: Icon, colorClass }: { icon: any; colorClass: strin
 
 function HomePage() {
   const [expandedWorkflow, setExpandedWorkflow] = useState<string | null>(null)
+
+  // Prevent background scrolling when modal is open
+  React.useEffect(() => {
+    if (expandedWorkflow) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [expandedWorkflow])
 
   const workflows = [
     {
@@ -43,12 +61,6 @@ function HomePage() {
       fullDescription:
         "AskBhunte is a multimodal AI assistant integrated with Facebook Messenger. It delivers real-time updates on Forex, Stocks, Gold/Silver prices, Nepalese bank loan rates, and the latest news from The Kathmandu Post — all in one conversational interface.",
       workflowUrl: "https://www.facebook.com/askbhunte",
-      steps: [
-        { icon: Facebook, title: "Connect to Messenger", description: "Seamlessly connect via Facebook Messenger webhook." },
-        { icon: TrendingUp, title: "Track Market Data", description: "Instantly access real-time gold, silver, stock, and Forex prices." },
-        { icon: Newspaper, title: "Get Latest News", description: "Receive verified updates from The Kathmandu Post directly in Messenger." },
-        { icon: Landmark, title: "Compare Loan Rates", description: "Check and compare current loan rates from multiple Nepali banks easily." },
-      ],
       problems: [
         "Keeping track of gold, silver, stocks, and Forex prices in real-time is tedious.",
         "Manually checking loan rates from multiple Nepali banks is inefficient.",
@@ -76,9 +88,10 @@ function HomePage() {
       workflowUrl: "/cvEvaluation",
       isInternalRoute: true,
       steps: [
+        { icon: CheckCircle2, title: "Select Job Position", description: "Choose the job role and requirements for candidate evaluation." },
         { icon: FileText, title: "Upload Resumes", description: "Securely upload CVs through the portal." },
         { icon: Zap, title: "AI Evaluation", description: "Automatically assess skills, experience, and match to job requirements." },
-        { icon: CheckCircle2, title: "Generate Reports", description: "Create detailed scorecards for each candidate." },
+        { icon: Mail, title: "Generate Reports", description: "Create detailed scorecards for each candidate." },
       ],
       problems: [
         "Manual resume screening consumes excessive recruiter time",
@@ -128,6 +141,7 @@ function HomePage() {
         "Small businesses managing leave without HR staff",
         "Organizations tracking sick leave trends over time",
         "Companies reducing errors in leave records",
+        "Integrate the Gmail into Google Sheets for seamless data management",
       ],
     },
     {
@@ -143,9 +157,10 @@ function HomePage() {
       workflowUrl: "/invoiceValidation",
       isInternalRoute: true,
       steps: [
-        { icon: FileText, title: "Receive Invoices", description: "Invoices are captured via webhook." },
-        { icon: Zap, title: "Extract Data", description: "Use AI to automatically extract key invoice information." },
-        { icon: Mail, title: "Notify Departments", description: "Send notifications to relevant teams for validation." },
+        { icon: FileText, title: "Upload Invoice", description: "Upload purchase receipt for warranty verification and product validation." },
+        { icon: Package, title: "Select Products", description: "Choose affected products and specify support type (warranty claim, troubleshooting, etc.)." },
+        { icon: MessageSquare, title: "Describe Issue", description: "Provide detailed description of the problem and desired resolution." },
+        { icon: Mail, title: "Submit & Notify", description: "Submit claim and receive email confirmation with tracking details." },
       ],
       problems: [
         "Manual invoice processing is slow and error-prone",
@@ -163,57 +178,67 @@ function HomePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-50 font-sans mx-auto max-w-7xl px-8">
+    <div className="min-h-screen bg-white text-slate-900 font-sans mx-auto max-w-7xl px-8">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 w-full z-60 border-b border-slate-800 bg-[#020617]/80 backdrop-blur-md">
+      <nav className="fixed top-0 left-0 w-full z-60 border-b border-slate-200 bg-white/80 backdrop-blur-md">
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex h-14 items-center justify-between">
-            <div className="flex items-center gap-2.5">
+            <a href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity cursor-pointer">
               <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <Zap className="h-5 w-5 text-white" />
               </div>
-              <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white to-slate-400">
+              <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-slate-900 to-slate-600">
                 Rumsan Automations
               </span>
-            </div>
+            </a>
           </div>
         </div>
       </nav>
 
       <main className="w-full px-4 py-30 sm:px-6 lg:px-8">
         <div className="mb-20">
-          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-4xl mb-4">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-4xl mb-4">
             Intelligent Workflow Solutions
           </h1>
-          <p className="text-xl text-slate-400 max-w-3xl leading-relaxed">
+          <p className="text-xl text-slate-600 max-w-3xl leading-relaxed">
             Enterprise-grade n8n automations integrated with cutting-edge AI for seamless business operations.
           </p>
         </div>
 
-        <div className="grid gap-8 sm:grid-cols-2">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-2">
           {workflows.map((workflow) => (
             <Card
               key={workflow.id}
-              className="group bg-[#030712] border-slate-800/50 hover:border-blue-500/30 transition-all duration-300 relative overflow-hidden h-110"
+              className="group bg-linear-to-br from-white to-slate-50 border-slate-200 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 relative overflow-hidden flex flex-col"
             >
-              <div className="absolute top-0 right-0 p-6">
-                <span className="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">
+              {/* Gradient overlay on hover */}
+              <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="absolute top-0 right-0 p-6 z-10">
+                <span className="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-400 ring-1 ring-inset ring-blue-500/30 backdrop-blur-sm">
                   {workflow.badge}
                 </span>
               </div>
-              <CardHeader className="p-8">
-                <WorkflowIcon icon={workflow.icon} colorClass={workflow.iconColor} />
-                <CardTitle className="mt-6 text-3xl font-bold text-white leading-tight">{workflow.title}</CardTitle>
-                <CardDescription className="text-lg text-slate-400 mt-4 leading-relaxed">
+              
+              <CardHeader className="p-8 relative z-10 grow">
+                <div className="mb-6 transform group-hover:scale-110 transition-transform duration-500">
+                  <WorkflowIcon icon={workflow.icon} colorClass={workflow.iconColor} />
+                </div>
+                <CardTitle className="text-3xl font-bold text-slate-900 leading-tight mb-4 group-hover:text-blue-900 transition-colors">
+                  {workflow.title}
+                </CardTitle>
+                <CardDescription className="text-base text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors">
                   {workflow.shortDescription}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="px-8 pb-8">
+              
+              <CardContent className="px-8 pb-8 relative z-10 mt-auto">
                 <Button
-                  className="w-full bg-[#030712] border border-slate-800 hover:bg-slate-800 text-white h-14 text-lg font-medium group-hover:border-slate-700 transition-colors"
+                  className="w-full bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 border-0 text-white h-12 text-base font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300 group/btn"
                   onClick={() => setExpandedWorkflow(workflow.id)}
                 >
-                  Explore <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  Explore Workflow 
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover/btn:translate-x-1" />
                 </Button>
               </CardContent>
             </Card>
@@ -223,34 +248,34 @@ function HomePage() {
 
       {/* Expanded Workflow Modal */}
       {expandedWorkflow && (
-        <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-xl z-50 flex items-center justify-center p-4 mt-10">
-          <Card className="max-h-[90vh] w-full max-w-4xl overflow-y-auto relative bg-[#020617] border-slate-800 shadow-2xl">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xl z-50 flex items-center justify-center p-4 mt-10">
+          <Card className="h-[90vh] w-full max-w-4xl relative bg-white border-slate-200 shadow-2xl overflow-y-auto">
             <button
               onClick={() => setExpandedWorkflow(null)}
-              className="absolute top-6 right-6 p-2 hover:bg-slate-800 rounded-full transition-colors z-10"
+              className="absolute top-6 right-6 p-2 hover:bg-slate-100 rounded-full transition-colors z-10"
             >
-              <X className="h-6 w-6 text-slate-400" />
+              <X className="h-6 w-6 text-slate-600" />
             </button>
-            <CardHeader className="p-10 border-b border-slate-800">
+            <CardHeader className="p-10 border-b border-slate-200">
               <div className="flex items-center gap-4 mb-4">
-                <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold ring-1 ring-blue-500/20">
+                <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 text-xs font-semibold ring-1 ring-blue-500/20">
                   {workflows.find((w) => w.id === expandedWorkflow)?.badge}
                 </span>
               </div>
-              <CardTitle className="text-4xl font-bold text-white">
+              <CardTitle className="text-4xl font-bold text-slate-900">
                 {workflows.find((w) => w.id === expandedWorkflow)?.title}
               </CardTitle>
-              <CardDescription className="text-xl mt-4 text-slate-400 leading-relaxed">
+              <CardDescription className="text-xl mt-4 text-slate-600 leading-relaxed">
                 {workflows.find((w) => w.id === expandedWorkflow)?.fullDescription}
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-10 space-y-12">
+            <CardContent className="p-8 space-y-6">
               
               {/* Problems & Use Cases for all workflows */}
               {(workflows.find((w) => w.id === expandedWorkflow)?.problems?.length ?? 0) > 0 && (
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-4">Problems</h3>
-                  <ul className="list-disc pl-6 space-y-2 text-slate-400">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">Problems</h3>
+                  <ul className="list-disc pl-5 space-y-1.5 text-sm text-slate-600">
                     {workflows.find((w) => w.id === expandedWorkflow)?.problems.map((p, idx) => (
                       <li key={idx}>{p}</li>
                     ))}
@@ -260,8 +285,8 @@ function HomePage() {
               
               {(workflows.find((w) => w.id === expandedWorkflow)?.useCases?.length ?? 0) > 0 && (
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-4">Use Cases</h3>
-                  <ul className="list-disc pl-6 space-y-2 text-slate-400">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">Use Cases</h3>
+                  <ul className="list-disc pl-5 space-y-1.5 text-sm text-slate-600">
                     {workflows.find((w) => w.id === expandedWorkflow)?.useCases.map((u, idx) => (
                       <li key={idx}>{u}</li>
                     ))}
@@ -270,27 +295,29 @@ function HomePage() {
               )}
 
               {/* Key Steps */}
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-6">User Manual Steps</h3>
-                <div className="grid gap-6 sm:grid-cols-2">
-                  {workflows
-                    .find((w) => w.id === expandedWorkflow)
-                    ?.steps.map((step, idx) => {
-                      const StepIcon = step.icon
-                      return (
-                        <div key={idx} className="flex gap-5 p-6 rounded-2xl border border-slate-800 bg-slate-900/40">
-                          <div className="h-12 w-12 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center shrink-0">
-                            <StepIcon className="h-6 w-6 text-blue-400" />
+              {(workflows.find((w) => w.id === expandedWorkflow)?.steps?.length ?? 0) > 0 && (
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-4">User Manual Steps</h3>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {workflows
+                      .find((w) => w.id === expandedWorkflow)
+                      ?.steps?.map((step, idx) => {
+                        const StepIcon = step.icon
+                        return (
+                          <div key={idx} className="flex gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
+                            <div className="h-8 w-8 rounded-lg bg-blue-600/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                              <StepIcon className="h-4 w-4 text-blue-600" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-slate-900 text-sm">{`${idx + 1}. ${step.title}`}</p>
+                              <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">{step.description}</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-bold text-white text-lg">{`${idx + 1}. ${step.title}`}</p>
-                            <p className="text-slate-400 mt-1 leading-relaxed">{step.description}</p>
-                          </div>
-                        </div>
-                      )
-                    })}
+                        )
+                      })}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Launch Button */}
               {workflows.find((w) => w.id === expandedWorkflow)?.workflowUrl && (
@@ -324,20 +351,4 @@ function HomePage() {
   )
 }
 
-// Sick Leave Form Page Component
-function SickLeaveFormPage() {
-  return (
-    <main className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <h1 className="text-2xl font-semibold text-center mb-8 text-balance">Employee Sick Leave Request</h1>
-        <SickLeaveForm />
-      </div>
-    </main>
-  )
-}
-
-// Export the main component as default
 export default HomePage
-
-// Export the SickLeaveFormPage as a named export if needed elsewhere
-export { SickLeaveFormPage }

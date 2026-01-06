@@ -22,6 +22,7 @@ import {
   AlertCircle,
   XCircle,
   Eye,
+  Building,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -310,10 +311,8 @@ export function ClaimsPortal() {
   const canGoNext = false; // Disabled next button completely
 
   const handleStartClaim = async () => {
-    console.log("[v0] Starting claim process...");
     setIsSubmitting(true);
     try {
-      console.log("[v0] Calling webhook URL...");
       const formData = new FormData();
       formData.append("action", "start_claim");
       formData.append("timestamp", new Date().toISOString());
@@ -323,43 +322,28 @@ export function ClaimsPortal() {
         body: formData,
       });
 
-      console.log("[v0] Response status:", response.status);
       if (response.ok) {
         let responseData = null;
         const responseText = await response.text();
-        console.log("[v0] Response text:", responseText);
 
         if (responseText.trim()) {
           try {
             responseData = JSON.parse(responseText);
-            console.log("[v0] Response data:", responseData);
 
             if (responseData?.resumeUrl) {
-              console.log(
-                "[v0] Setting resumeUrl from start claim:",
-                responseData.resumeUrl
-              );
               setResumeUrl(responseData.resumeUrl);
             }
 
             // Store execution ID for tracking
             if (responseData?.executionId) {
-              console.log(
-                "[v0] Setting executionId:",
-                responseData.executionId
-              );
               setExecutionId(responseData.executionId);
             }
           } catch (parseError) {
-            console.log("[v0] Response is not JSON, treating as success");
+            // Response is not JSON, treating as success
           }
-        } else {
-          console.log(
-            "[v0] Empty response - webhook triggered successfully, resumeUrl should be available from n8n workflow"
-          );
         }
 
-        console.log("[v0] Setting claimStarted to true and currentStep to 1");
+
         setClaimStarted(true);
         setCurrentStep(1); // Move to upload invoice step
 
@@ -372,7 +356,6 @@ export function ClaimsPortal() {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
-      console.log("[v0] Error starting claim:", error);
       if (error instanceof TypeError && error.message.includes("fetch")) {
         toast({
           title: "Network Error",
@@ -389,7 +372,6 @@ export function ClaimsPortal() {
         });
       }
     } finally {
-      console.log("[v0] Setting isSubmitting to false");
       setIsSubmitting(false);
     }
   };
@@ -431,8 +413,8 @@ export function ClaimsPortal() {
     setClaimData((prev) => ({
       ...prev,
       issueType: type,
-      // Clear description if switching from "Other" to predefined option
-      issueDescription: type !== "other" ? "" : prev.issueDescription, // Reset description when switching from "other"
+      // Clear description if switching from "other" to predefined option
+      issueDescription: type !== "other" ? type : prev.issueDescription, // Use the selected type as description for non-other options
     }));
   };
 
@@ -445,10 +427,7 @@ export function ClaimsPortal() {
       // Map support type to category
       formData.append("category", claimData.supportType);
 
-      const issueText =
-        claimData.issueType === "Other"
-          ? claimData.issueDescription
-          : claimData.issueType;
+      const issueText = claimData.issueDescription;
       const title = `${claimData.supportType}: ${issueText}`;
       formData.append("title", title);
 
@@ -458,17 +437,9 @@ export function ClaimsPortal() {
       formData.append("priority", priority);
 
       const resolutionText =
-        claimData.selectedResolution === "Other"
+        claimData.selectedResolution === "other"
           ? claimData.desiredResolution
           : claimData.selectedResolution;
-
-      console.log("[v0] issueDescription:", issueText);
-      console.log("[v0] resolutionSought:", resolutionText);
-      console.log("[v0] claimData.issueType:", claimData.issueType);
-      console.log(
-        "[v0] claimData.selectedResolution:",
-        claimData.selectedResolution
-      );
 
       const description = `
 Issue: ${issueText}
@@ -508,19 +479,14 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
         formData.append("invoice", claimData.invoice);
       }
 
-      console.log("[v0] Submitting claim with title:", title);
-
       const response = await fetch("/api/submit-ticket", {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
-        console.log("[v0] Claim submitted successfully, now sending email...");
-
         try {
           if (!resumeUrl) {
-            console.log("[v0] No resumeUrl available for email sending");
             throw new Error("Resume URL not available for email sending");
           }
 
@@ -552,29 +518,15 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
             emailData.append("invoice", claimData.invoice);
           }
 
-          console.log(
-            "[v0] Sending email notification to:",
-            claimData.notificationEmail
-          );
-          console.log("[v0] Using resumeUrl as targetUrl:", resumeUrl);
-
           const emailResponse = await fetch("/api/webhook-proxy", {
             method: "POST",
             body: emailData,
           });
 
-          console.log("[v0] Email response status:", emailResponse.status);
-
           if (emailResponse.ok) {
             const emailResponseText = await emailResponse.text();
-            console.log("[v0] Email sent successfully:", emailResponseText);
-          } else {
-            console.log(
-              "[v0] Email sending failed, but claim was submitted successfully"
-            );
           }
         } catch (emailError) {
-          console.log("[v0] Error sending email notification:", emailError);
           // Don't fail the entire submission if email fails
         }
 
@@ -632,7 +584,6 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
         throw new Error("Failed to submit claim");
       }
     } catch (error) {
-      console.log("[v0] Error submitting claim:", error);
       toast({
         title: "Submission failed",
         description:
@@ -673,8 +624,6 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
           return;
         }
 
-        console.log("[v0] Uploading invoice to resumeUrl:", resumeUrl);
-
         const formData = new FormData();
         formData.append("targetUrl", resumeUrl);
         formData.append("action", "invoice_uploaded");
@@ -691,46 +640,28 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
           body: formData,
         });
 
-        console.log("[v0] Invoice upload response status:", response.status);
-
         if (response.ok) {
           try {
             const responseText = await response.text();
-            console.log("[v0] Invoice upload response text:", responseText);
 
             if (responseText.trim()) {
               const responseData: WebhookProductsResponse =
                 JSON.parse(responseText);
-              console.log("[v0] Parsed response data:", responseData);
 
               if (responseData?.customerName) {
-                console.log(
-                  "[v0] Setting customer name:",
-                  responseData.customerName
-                );
                 setCustomerName(responseData.customerName);
               }
               if (responseData?.vendor) {
-                console.log("[v0] Setting vendor:", responseData.vendor);
                 setVendor(responseData.vendor);
               }
               if (responseData?.invoiceNumber) {
-                console.log(
-                  "[v0] Setting invoice number:",
-                  responseData.invoiceNumber
-                );
                 setInvoiceNumber(responseData.invoiceNumber);
               }
               if (responseData?.invoiceId) {
-                console.log("[v0] Setting invoice ID:", responseData.invoiceId);
                 setInvoiceId(responseData.invoiceId);
               }
 
               if (responseData?.products) {
-                console.log(
-                  "[v0] Setting products from webhook:",
-                  responseData.products
-                );
                 let productNames: string[] = [];
 
                 if (Array.isArray(responseData.products)) {
@@ -765,29 +696,16 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                     .filter((product) => product.length > 0);
                 }
 
-                console.log("[v0] Extracted product names:", productNames);
-
                 if (productNames.length > 0) {
                   setWebhookProducts(productNames);
                 } else {
-                  console.log(
-                    "[v0] No valid product names extracted, using default products"
-                  );
                   setWebhookProducts(AVAILABLE_PRODUCTS);
                 }
               } else {
-                console.log(
-                  "[v0] No products in webhook response, using default products"
-                );
                 setWebhookProducts(AVAILABLE_PRODUCTS);
               }
 
               if (responseData?.warrantyStatus) {
-                console.log(
-                  "[v0] Warranty status received:",
-                  responseData.warrantyStatus
-                );
-
                 const rawWarrantyStatus =
                   responseData.warrantyStatus.toLowerCase();
 
@@ -824,10 +742,6 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
               }
 
               if (responseData?.resumeUrl) {
-                console.log(
-                  "[v0] Setting resumeUrl from invoice upload:",
-                  responseData.resumeUrl
-                );
                 setResumeUrl(responseData.resumeUrl);
               }
 
@@ -835,16 +749,10 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                 setExecutionId(responseData.executionId);
               }
             } else {
-              console.log(
-                "[v0] Empty response from invoice upload, using default products"
-              );
               setWebhookProducts(AVAILABLE_PRODUCTS);
               setWarrantyStatus("available"); // Default to available for empty responses
             }
           } catch (parseError) {
-            console.log(
-              "[v0] Could not parse response for products, using default products"
-            );
             setWebhookProducts(AVAILABLE_PRODUCTS);
             setWarrantyStatus("available"); // Default to available on parse error
           }
@@ -1045,8 +953,6 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
           return;
         }
 
-        console.log("[v0] Continuing to resolution with resumeUrl:", resumeUrl);
-
         const formData = new FormData();
         formData.append("targetUrl", resumeUrl);
         formData.append("action", "issue_described");
@@ -1067,63 +973,39 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
 
         if (response.ok) {
           const responseText = await response.text();
-          console.log("[v0] Issue description response:", responseText);
 
           if (responseText.trim()) {
             try {
               const responseData = JSON.parse(responseText);
-              console.log("[v0] Parsed response data:", responseData);
 
               if (responseData?.plainText) {
                 // Handle the actual response format with plainText field
-                console.log(
-                  "[v0] Setting webhook response from plainText field:",
-                  responseData.plainText
-                );
                 setWebhookResponse(responseData.plainText);
               } else if (responseData?.output) {
                 // Fallback for output field format
-                console.log(
-                  "[v0] Setting webhook response from output field:",
-                  responseData.output
-                );
                 setWebhookResponse(responseData.output);
               } else if (
                 responseData?.message &&
                 responseData.message !== "Workflow was started"
               ) {
                 // Handle message field if it's not the "started" message
-                console.log(
-                  "[v0] Setting webhook response from message field:",
-                  responseData.message
-                );
                 setWebhookResponse(responseData.message);
               } else {
                 // Use raw response as fallback
-                console.log("[v0] Using raw response data as webhook response");
                 setWebhookResponse(JSON.stringify(responseData, null, 2));
               }
 
               // Update resumeUrl if provided
               if (responseData?.resumeUrl) {
-                console.log(
-                  "[v0] Updated resumeUrl for final step:",
-                  responseData.resumeUrl
-                );
                 setResumeUrl(responseData.resumeUrl);
               }
               if (responseData?.executionId) {
                 setExecutionId(responseData.executionId);
               }
             } catch (parseError) {
-              console.log(
-                "[v0] Could not parse JSON response, using raw text:",
-                responseText
-              );
               setWebhookResponse(responseText);
             }
           } else {
-            console.log("[v0] Empty response received");
             setWebhookResponse("Analysis completed successfully.");
           }
 
@@ -1136,7 +1018,6 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
       } catch (error) {
-        console.log("[v0] Error continuing to resolution:", error);
         toast({
           title: "Error",
           description: "Failed to proceed. Please try again.",
@@ -1159,14 +1040,11 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
     : [];
 
   return (
-    // Reduced gap from gap-4 to gap-3
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+    // Three column layout: sidebar, main form, and results section
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-2">
       <div className="lg:col-span-1">
-        <Card className="bg-slate-900 text-white">
-          <CardHeader className="pb-1">
-            <CardTitle className="text-base">Claim Status</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1">
+        <Card className="bg-white text-slate-900 border-slate-200 shadow-sm">
+          <CardContent className="space-y-1 pt-2 pb-2">
             {steps.map((step) => {
               const Icon = step.icon;
               const isCompleted = step.completed;
@@ -1174,9 +1052,10 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
               return (
                 <div
                   key={step.id}
-                  // Reduced padding from p-2 to p-1.5 and gap from gap-3 to gap-2
-                  className={`flex items-center gap-2 p-1.5 rounded transition-colors ${
-                    isCompleted ? "bg-green-900/30" : "bg-slate-800/50"
+                  className={`flex items-center gap-1.5 p-1.5 rounded-md border transition-all duration-200 ${
+                    isCompleted 
+                      ? "bg-green-50 border-green-200" 
+                      : "bg-slate-50 border-slate-200 hover:border-slate-300"
                   }`}
                 >
                   <div className="shrink-0">
@@ -1185,16 +1064,20 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                         <Check className="w-3 h-3 text-white" />
                       </div>
                     ) : (
-                      <div className="w-5 h-5 border-2 border-gray-400 rounded-full" />
+                      <div className="w-5 h-5 border-2 border-slate-300 rounded-full bg-white" />
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate">{step.title}</p>
-                    <p className="text-xs text-gray-300 truncate">
+                    <p className={`text-xs font-semibold truncate ${
+                      isCompleted ? "text-green-700" : "text-slate-700"
+                    }`}>{step.title}</p>
+                    <p className="text-xs text-slate-500 truncate">
                       {step.description}
                     </p>
                   </div>
-                  <Icon className="w-4 h-4 text-gray-400 shrink-0" />
+                  <Icon className={`w-4 h-4 shrink-0 ${
+                    isCompleted ? "text-green-600" : "text-slate-400"
+                  }`} />
                 </div>
               );
             })}
@@ -1202,25 +1085,22 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
         </Card>
 
         {claimData.invoice && (
-          <Card className="mt-2 border-blue-200 shadow-sm">
-            <CardHeader className="pb-1.5 pt-1.5 bg-linear-to-r from-blue-50 to-transparent">
-              <CardTitle className="text-xs font-semibold text-gray-800 flex items-center gap-1.5">
+          <Card className="mt-1 border-blue-200 shadow-sm">
+            <CardHeader className="pb-0.5 pt-1.5">
+              <CardTitle className="text-xs font-semibold text-slate-800 flex items-center gap-1">
                 <FileText className="w-3 h-3 text-blue-600" />
                 Invoice Preview
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-0 pb-1.5 space-y-1.5">
-              <div className="flex items-center justify-between gap-2 p-1.5 bg-linear-to-r from-gray-50 to-gray-100 rounded-md border border-gray-200 hover:border-blue-300 transition-colors">
-                <div className="flex items-center gap-1.5 flex-1 min-w-0">
-                  <div className="p-1 bg-blue-100 rounded-sm">
-                    <FileText className="w-3.5 h-3.5 text-blue-600" />
+            <CardContent className="pt-0.5 pb-1 space-y-0.5">
+              <div className="flex items-center justify-between gap-1 p-1 bg-linear-to-r from-slate-50 to-slate-100 rounded border border-slate-200 hover:border-blue-300 transition-colors">
+                <div className="flex items-center gap-1 flex-1 min-w-0">
+                  <div className="p-0.5 bg-blue-100 rounded-sm">
+                    <FileText className="w-3 h-3 text-blue-600" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-gray-900 truncate leading-tight">
+                    <p className="text-xs font-semibold text-slate-900 truncate">
                       {claimData.invoice.name}
-                    </p>
-                    <p className="text-xs text-gray-500 leading-tight">
-                      {(claimData.invoice.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
                 </div>
@@ -1231,38 +1111,33 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                       window.open(fileUrl, "_blank");
                     }
                   }}
-                  className="p-1 bg-blue-600 hover:bg-blue-700 rounded-sm transition-colors shadow-sm shrink-0"
+                  className="p-0.5 bg-blue-600 hover:bg-blue-700 rounded-sm transition-colors shadow-sm shrink-0"
                   title="Preview invoice"
                 >
-                  <Eye className="w-3.5 h-3.5 text-white" />
+                  <Eye className="w-3 h-3 text-white" />
                 </button>
               </div>
 
               {warrantyStatus && (
                 <div
-                  className={`flex items-center gap-1.5 p-1.5 rounded-md border shadow-sm ${
+                  className={`flex items-center gap-1 p-1 rounded border shadow-sm ${
                     warrantyStatus === "available"
                       ? "bg-linear-to-r from-green-50 to-green-100 border-green-300 text-green-800"
                       : "bg-linear-to-r from-red-50 to-red-100 border-red-300 text-red-800"
                   }`}
                 >
-                  <div className={`p-1 rounded-sm ${warrantyStatus === "available" ? "bg-green-200" : "bg-red-200"}`}>
+                  <div className={`p-0.5 rounded-sm ${warrantyStatus === "available" ? "bg-green-200" : "bg-red-200"}`}>
                     {warrantyStatus === "available" ? (
-                      <CheckCircle className="w-3.5 h-3.5" />
+                      <CheckCircle className="w-3 h-3" />
                     ) : (
-                      <XCircle className="w-3.5 h-3.5" />
+                      <XCircle className="w-3 h-3" />
                     )}
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-bold leading-tight">
+                    <p className="text-xs font-semibold">
                       {warrantyStatus === "available"
-                        ? "Eligible for Warranty Claim"
-                        : "Ineligible for Warranty Claim"}
-                    </p>
-                    <p className="text-xs font-medium leading-tight">
-                      {warrantyStatus === "available"
-                        ? "Warranty is active"
-                        : "Warranty expired"}
+                        ? "Warranty Active - Eligible for Claim"
+                        : "Warranty Expired - Ineligible for Claim"}
                     </p>
                   </div>
                 </div>
@@ -1271,102 +1146,22 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
           </Card>
         )}
 
-        {(isAnalyzing || analysisData) && (
-          <Card className="mt-4">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                {isAnalyzing ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Analyzing Invoice...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    Analysis Complete
-                  </>
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0 space-y-3">
-              {isAnalyzing ? (
-                <div className="text-xs text-gray-600">
-                  <p>• Extracting invoice data...</p>
-                  <p>• Validating information...</p>
-                  <p>• Generating recommendations...</p>
-                </div>
-              ) : analysisData ? (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium">Confidence:</span>
-                    <span className="text-xs text-green-600">
-                      {analysisData.confidence}%
-                    </span>
-                  </div>
 
-                  {analysisData.extractedData && (
-                    <div className="text-xs space-y-1">
-                      <p className="font-medium">Extracted Data:</p>
-                      {analysisData.extractedData.amount && (
-                        <p>Amount: {analysisData.extractedData.amount}</p>
-                      )}
-                      {analysisData.extractedData.date && (
-                        <p>Date: {analysisData.extractedData.date}</p>
-                      )}
-                      {analysisData.extractedData.vendor && (
-                        <p>Vendor: {analysisData.extractedData.vendor}</p>
-                      )}
-                    </div>
-                  )}
-
-                  {analysisData.recommendations &&
-                    analysisData.recommendations.length > 0 && (
-                      <div className="text-xs">
-                        <p className="font-medium text-blue-600 flex items-center gap-1">
-                          <AlertCircle className="w-3 h-3" />
-                          Recommendations:
-                        </p>
-                        {analysisData.recommendations.map((rec, index) => (
-                          <p key={index} className="text-blue-600">
-                            • {rec}
-                          </p>
-                        ))}
-                      </div>
-                    )}
-
-                  {analysisData.issues && analysisData.issues.length > 0 && (
-                    <div className="text-xs">
-                      <p className="font-medium text-orange-600 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" />
-                        Issues Found:
-                      </p>
-                      {analysisData.issues.map((issue, index) => (
-                        <p key={index} className="text-orange-600">
-                          • {issue}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : null}
-            </CardContent>
-          </Card>
-        )}
       </div>
 
       <div className="lg:col-span-2">
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Claim Support</CardTitle>
-            <p className="text-sm text-gray-600">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Claim Support</CardTitle>
+            <p className="text-sm text-slate-600">
               Complete each step to submit your claim
             </p>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-2">
             {!isSubmitted ? (
               <>
                 {currentStep === 0 && (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <div className="flex items-center gap-2 mb-2">
                       <Target className="w-4 h-4 text-blue-600" />
                       <h3 className="text-base font-semibold">
@@ -1374,7 +1169,7 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                       </h3>
                     </div>
                     <div className="text-center space-y-3">
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-slate-600">
                         Click the button below to initialize your claim process.
                       </p>
                       <Button
@@ -1389,7 +1184,7 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                 )}
 
                 {currentStep === 1 && (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <div className="flex items-center gap-2 mb-2">
                       <Upload className="w-4 h-4 text-blue-600" />
                       <h3 className="text-base font-semibold">
@@ -1401,16 +1196,16 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                         Upload Invoice/Receipt *
                       </Label>
                       <div
-                        className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-gray-400 transition-colors"
+                        className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center cursor-pointer hover:border-slate-400 transition-colors"
                         onClick={() => fileInputRef.current?.click()}
                       >
-                        <Upload className="w-6 h-6 text-gray-400 mx-auto mb-1" />
-                        <p className="text-sm text-gray-600">
+                        <Upload className="w-6 h-6 text-slate-400 mx-auto mb-1" />
+                        <p className="text-sm text-slate-600">
                           {claimData.invoice
                             ? claimData.invoice.name
                             : "Click to upload invoice/receipt"}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-slate-500 mt-1">
                           Supported formats: PDF, DOCX
                         </p>
                       </div>
@@ -1478,7 +1273,7 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                         </Button>
                         <Button
                           onClick={() => handleWarrantyExpiredDecision(false)}
-                          className="flex-1"
+                          className="flex-1 hover:bg-red-100! hover:text-red-900! hover:border-red-300!"
                           variant="outline"
                         >
                           No, Cancel Claim
@@ -1526,7 +1321,7 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                         </Button>
                         <Button
                           onClick={() => handleWarrantyAvailableDecision(false)}
-                          className="flex-1"
+                          className="flex-1 hover:bg-red-100! hover:text-red-900! hover:border-red-300!"
                           variant="outline"
                         >
                           No, Cancel Claim
@@ -1598,12 +1393,7 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                         <Label className="text-sm">
                           Choose the affected product(s) *
                         </Label>
-                        {/* {console.log("[v0] Current webhookProducts:", webhookProducts)}
-                        {console.log(
-                          "[v0] Using products:",
-                          webhookProducts.length > 0 ? webhookProducts : AVAILABLE_PRODUCTS,
-                        )} */}
-                        <div className="grid grid-cols-2 gap-2 p-3 border rounded-lg max-h-40 overflow-y-auto">
+                        <div className="grid grid-cols-2 gap-2 p-3 border rounded-lg">
                           {(webhookProducts.length > 0
                             ? webhookProducts
                             : AVAILABLE_PRODUCTS
@@ -1639,7 +1429,7 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                         <Label className="text-sm">
                           Type of support needed *
                         </Label>
-                        <div className="grid grid-cols-1 gap-2 p-3 border rounded-lg">
+                        <div className="grid grid-cols-1 gap-2 p-2 border rounded-lg">
                           {SUPPORT_TYPES.map((supportType) => (
                             <div
                               key={supportType}
@@ -1704,7 +1494,7 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                         <SelectTrigger className="w-fit max-w-md text-base">
                           <SelectValue placeholder="Choose the type of issue..." />
                         </SelectTrigger>
-                        <SelectContent className="z-100 bg-blue-50 border-2 border-blue-400 shadow-2xl">
+                        <SelectContent className="z-50 bg-blue-50 border-2 border-blue-400 shadow-2xl">
                           {/* Dynamically populate issue options */}
                           {currentIssueOptions.map((option) => (
                             <SelectItem
@@ -1750,19 +1540,6 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
 
                 {currentStep === 4 && (
                   <div className="space-y-3">
-                    {webhookResponse && (
-                      <div className="space-y-2 mb-4">
-                        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                          <h4 className="text-sm font-medium text-blue-800 mb-1">
-                            Feedback Insights:{" "}
-                          </h4>
-                          <div className="text-sm text-blue-700 whitespace-pre-wrap">
-                            {webhookResponse}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
                     <div className="flex items-center gap-2 mb-2">
                       <Mail className="w-4 h-4 text-blue-600" />
                       <h3 className="text-base font-semibold">Resolution</h3>
@@ -1785,7 +1562,7 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                           <SelectTrigger className="w-fit max-w-md text-base">
                             <SelectValue placeholder="Select desired resolution" />
                           </SelectTrigger>
-                          <SelectContent className="z-100 bg-blue-50 border-2 border-blue-400 shadow-2xl">
+                          <SelectContent className="z-50 bg-blue-50 border-2 border-blue-400 shadow-2xl">
                             {(
                               RESOLUTION_OPTIONS[
                                 claimData.supportType as keyof typeof RESOLUTION_OPTIONS
@@ -1802,7 +1579,7 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                           </SelectContent>
                         </Select>
 
-                        {claimData.selectedResolution === "Other" && (
+                        {claimData.selectedResolution === "other" && (
                           <Textarea
                             placeholder="Please describe your desired resolution..."
                             value={claimData.desiredResolution}
@@ -1836,41 +1613,12 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                       </div>
 
                       {claimData.selectedResolution &&
-                        (claimData.selectedResolution !== "Other" ||
-                          (claimData.selectedResolution === "Other" &&
+                        (claimData.selectedResolution !== "other" ||
+                          (claimData.selectedResolution === "other" &&
                             claimData.desiredResolution.trim().length > 0)) &&
                         claimData.notificationEmail.length > 0 && (
                           <Button
                             onClick={() => {
-                              console.log("[v0] Submit button clicked");
-                              console.log(
-                                "[v0] webhookProducts:",
-                                webhookProducts
-                              );
-                              console.log(
-                                "[v0] supportType:",
-                                claimData.supportType
-                              );
-                              console.log(
-                                "[v0] selectedIssue:",
-                                claimData.selectedIssue
-                              );
-                              console.log(
-                                "[v0] issueDescription:",
-                                claimData.issueDescription
-                              );
-                              console.log(
-                                "[v0] selectedResolution:",
-                                claimData.selectedResolution
-                              );
-                              console.log(
-                                "[v0] desiredResolution:",
-                                claimData.desiredResolution
-                              );
-                              console.log(
-                                "[v0] notificationEmail:",
-                                claimData.notificationEmail
-                              );
                               handleSubmitClaim();
                             }}
                             className="w-full"
@@ -1892,10 +1640,10 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                     Claim Submitted Successfully!
                   </h3>
                   <div className="space-y-1.5">
-                    <p className="text-gray-600">
+                    <p className="text-slate-600">
                       Your claim has been submitted and is being processed.
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-slate-600">
                       You'll receive updates via email at{" "}
                       <span className="font-medium text-blue-600">
                         {claimData.notificationEmail}
@@ -1915,7 +1663,7 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
               </div>
             )}
             {currentStep > 0 && !isSubmitted && canGoBack && (
-              <div className="flex justify-start items-center p-3 bg-white rounded-lg border border-gray-200 mt-4">
+              <div className="flex justify-start items-center p-3 bg-white rounded-lg border border-slate-200 mt-4">
                 <Button
                   onClick={handleGoBack}
                   disabled={!canGoBack}
@@ -1942,6 +1690,11 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
             )}
           </CardContent>
         </Card>
+      </div>
+
+      {/* Results Section - Third Column */}
+      <div className="lg:col-span-1 space-y-3">
+        {/* Empty results section */}
       </div>
     </div>
   );
