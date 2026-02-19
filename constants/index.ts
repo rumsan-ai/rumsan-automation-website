@@ -12,8 +12,11 @@ export const PAGES = {
   DISCORD_URL: "https://discord.gg/ZaHWRcVN",
   TELEGRAM_URL: "https://t.me/aurora_raktim_bot",
 };
-
 export const RETELL_CONFIG = {
   SAMPLE_RATE: 24000,
   EMIT_RAW_AUDIO_SAMPLES: false,
+};
+
+export const VOICE_AGENT_CONFIG = {
+  WIDGET_URL: process.env.NEXT_PUBLIC_VOICE_AGENT_URL || "",
 };

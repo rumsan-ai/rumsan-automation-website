@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { SickLeaveForm } from "@/components/contact-form";
 import {
   Card,
   CardContent,
@@ -17,24 +16,18 @@ import {
   Mail,
   X,
   Facebook,
-  TrendingUp,
-  Newspaper,
-  Landmark,
   CalendarClock,
   Sheet,
   Code,
   GitBranch,
   ShieldCheck,
-  Target,
   Package,
   MessageSquare,
   MessageCircle,
-  Clock,
   Mic,
   Phone,
   Bot,
 } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 import React from "react";
 import { PAGES } from "@/constants";
@@ -104,6 +97,7 @@ function HomePage() {
       fullDescription:
         "AskBhunte is a multimodal AI assistant integrated with Facebook Messenger. It delivers real-time updates on Forex, Stocks, Gold/Silver prices, Nepalese bank loan rates, and the latest news from The Kathmandu Post — all in one conversational interface.",
       workflowUrl: PAGES.FACEBOOK_URL,
+      dateCreated: new Date("2025-12-15"),
       problems: [
         "Keeping track of gold, silver, stocks, and Forex prices in real-time is tedious.",
         "Manually checking loan rates from multiple Nepali banks is inefficient.",
@@ -132,6 +126,7 @@ function HomePage() {
         "Automatically evaluate CVs using AI. Extract information, score candidates, and generate detailed reports.",
       workflowUrl: "/cvEvaluation",
       isInternalRoute: true,
+      dateCreated: new Date("2025-12-16"),
       steps: [
         {
           icon: CheckCircle2,
@@ -175,53 +170,39 @@ function HomePage() {
       ],
     },
     {
-      id: "sick-leave",
+      id: "employee-leave-management",
       icon: CalendarClock,
       iconColor: "text-purple-500 border-purple-500/20 bg-purple-500/5",
       badge: "HR Automation",
-      title: "Sick Leave Management",
+      title: "Employee Leave Management",
       shortDescription:
-        "Automated leave request processing with Google Sheets sync and duplicate detection.",
+          "Boost HR productivity and business agility with AI-driven, automated leave management for all employee leave types.",
       fullDescription:
-        "Manage employee sick leave requests automatically. Validates duplicates, formats data, and archives entries in Google Sheets.",
-      image: "/images/image.png",
-      workflowUrl: "/sickLeave",
+          "Transform your HR operations with a fully automated, AI-powered leave management solution. Effortlessly process and categorize all leave requests (sick, emergency, personal, work-from-home) directly from Gmail. Ensure data accuracy, eliminate manual errors, and gain real-time visibility into workforce availability. The system validates, deduplicates, and syncs structured leave data to Google Sheets, supporting compliance, audit trails, and scalable growth. Empower managers to focus on strategic work, reduce operational costs, and deliver a seamless employee experience.",
       isInternalRoute: true,
-      steps: [
-        {
-          icon: FileText,
-          title: "Form Submission",
-          description: "Receive leave requests from employees via a web form.",
-        },
-        {
-          icon: Sheet,
-          title: "Check Duplicates",
-          description:
-            "Verify if the leave request already exists in the sheet.",
-        },
-        {
-          icon: Code,
-          title: "Process Request",
-          description: "Format and validate data for proper record-keeping.",
-        },
-        {
-          icon: GitBranch,
-          title: "Update Sheet",
-          description: "Append validated requests to the master Google Sheet.",
-        },
-      ],
+      dateCreated: new Date("2026-2-18"),
       problems: [
-        "Manual leave tracking is error-prone",
-        "Duplicate entries cause confusion",
-        "Managers spend too much time verifying requests",
-        "Employees face delays in approval notifications",
+          "Manual leave processing wastes valuable HR and management time",
+          "Operational inefficiencies increase payroll and admin costs",
+          "Lack of real-time leave data disrupts resource planning and project delivery",
+          "Manual errors and missing information lead to payroll disputes and compliance risks",
+          "No standardized process for handling multiple leave types (sick, emergency, personal, WFH)",
+          "Difficulty tracking work-from-home deliverables impacts productivity measurement",
+          "Duplicate or inconsistent records undermine data integrity and reporting",
+          "No audit trail or version history for compliance and dispute resolution",
+          "Scalability issues as business and workforce grow",
+          "Limited visibility for leadership to make data-driven decisions",
       ],
       useCases: [
-        "HR teams automating employee leave management",
-        "Small businesses managing leave without HR staff",
-        "Organizations tracking sick leave trends over time",
-        "Companies reducing errors in leave records",
-        "Integrate the Gmail into Google Sheets for seamless data management",
+          "Save HR and management time by automating leave request processing from Gmail",
+          "Reduce payroll and admin costs through error-free, standardized data entry",
+          "Gain instant visibility into employee availability for better project and resource planning",
+          "Ensure compliance and reduce risk with audit trails and versioned leave records",
+          "Support business growth with a scalable, automated leave management system",
+          "Empower leadership with real-time dashboards and actionable workforce insights",
+          "Track work-from-home deliverables for productivity and accountability",
+          "Eliminate duplicate entries and maintain clean, reliable data for payroll and reporting",
+          "Deliver a seamless, transparent leave experience for employees and managers",
       ],
     },
     {
@@ -237,6 +218,7 @@ function HomePage() {
       image: "/invoice-validation-workflow.png",
       workflowUrl: "/invoiceValidation",
       isInternalRoute: true,
+      dateCreated: new Date("2025-12-18"),
       steps: [
         {
           icon: FileText,
@@ -288,6 +270,7 @@ function HomePage() {
         "Advanced Discord bot integration with AI-powered moderation, automated responses, and community engagement features.",
       workflowUrl: PAGES.DISCORD_URL,
       isInternalRoute: false,
+      dateCreated: new Date("2025-12-19"),
       problems: [
         "Keeping track of gold, silver, stocks, and Forex prices in real-time is tedious.",
         "Manually checking loan rates from multiple Nepali banks is inefficient.",
@@ -315,6 +298,7 @@ function HomePage() {
         "Advanced Telegram bot integration with AI-powered responses, automated support, and seamless communication features for instant customer engagement.",
       workflowUrl: PAGES.TELEGRAM_URL,
       isInternalRoute: false,
+      dateCreated: new Date("2025-12-22"),
       problems: [
         "Keeping track of gold, silver, stocks, and Forex prices in real-time is tedious.",
         "Manually checking loan rates from multiple Nepali banks is inefficient.",
@@ -331,17 +315,103 @@ function HomePage() {
       ],
     },
     {
+      id: "gmail-application",
+      icon: Mail,
+      iconColor: "text-red-500 border-red-500/20 bg-red-500/5",
+      badge: "Email Automation",
+      title: "Job Application Email Organizer",
+      shortDescription:
+        "Automated Gmail filtering for job applications with intelligent categorization and response management. Simply send us an email to get started.",
+      fullDescription:
+        "Effortless email filtering for your applications. Simply send your emails and our system will automatically filter them based on your specific requirements. The system provides automatic categorization of job applications, intelligent filtering based on subject lines and content analysis, automated responses, and seamless integration with your hiring workflow.",
+      isInternalRoute: true,
+      dateCreated: new Date("2026-2-2"),
+      problems: [
+        "Manual sorting of hundreds of job applications consumes excessive HR time",
+        "Important applications get buried in crowded inboxes and are missed",
+        "Inconsistent response times to applicants create poor candidate experience",
+        "Difficulty tracking application status across different email threads",
+        "No standardized process for evaluating and categorizing incoming applications",
+        "High risk of losing qualified candidates due to delayed email responses",
+        "Lack of automated acknowledgment system for applicant inquiries",
+      ],
+      useCases: [
+        "HR teams managing high-volume recruitment campaigns",
+        "Companies filtering job applications from multiple job boards and channels",
+        "Recruitment agencies handling client applications across various positions",
+        "Organizations with career email addresses receiving constant application traffic",
+        "Companies needing automated applicant communication and tracking systems",
+        "Teams requiring integration between Gmail and applicant tracking systems",
+        "Businesses seeking to improve response time and overall candidate experience",
+        "Startups managing applications for full-time, part-time, and contract positions",
+      ],
+    },
+    {
       id: "voice-agent",
       icon: Bot,
       iconColor: "text-purple-500 border-purple-500/20 bg-purple-500/5",
       badge: "AI Voice",
-      title: "Rumsan Voice Agent Assistant",
+      title: "Rumsan AI Voice Agent",
       shortDescription:
-        "AI-powered voice conversations with real-time transcription and natural language processing.",
+        "Advanced AI voice assistant with embedded widget integration and natural conversation flow.",
       fullDescription:
-        "Experience natural voice interactions with our AI agent. Features real-time voice recognition, intelligent responses, and comprehensive conversation transcripts.",
+        "Experience next-generation voice interactions with the AI assistant. Features advanced voice processing, contextual understanding, and seamless widget integration.",
       workflowUrl: "/voiceAgent",
       isInternalRoute: true,
+      dateCreated: new Date("2025-12-26"),
+      steps: [
+        {
+          icon: Phone,
+          title: "Start Voice Call",
+          description: "Initiate a voice conversation with the AI agent.",
+        },
+        {
+          icon: Mic,
+          title: "Voice Recognition",
+          description:
+            "AI processes your speech in real-time with high accuracy.",
+        },
+        {
+          icon: MessageCircle,
+          title: "Intelligent Response",
+          description:
+            "Agent provides contextual responses through voice and text.",
+        },
+        {
+          icon: FileText,
+          title: "Conversation Transcript",
+          description:
+            "View complete conversation history with user and agent messages.",
+        },
+      ],
+      problems: [
+        "Complex services like AI, blockchain, and Web3 are hard to explain clearly through text alone.",
+        "Manual handling of inquiries and scheduling leads to delays and limited availability.",
+        "Clients across regions need 24/7 access to service information and support.",
+        "Text-based communication creates accessibility and language barriers.",
+        "Client conversations are not always recorded for follow-ups and insights.",
+      ],
+      useCases: [
+        "Voice-Based Client Support: Natural conversations to explain Rumsan's services and products.",
+        "Consultation & Demo Scheduling: Easy voice booking for consultations and demos of Rahat, eSatya, and Hamro LifeBank.",
+        "Simplifying Technology Discussions: Clear voice explanations for AI, blockchain, and Web3 solutions.",
+        "24/7 Virtual Org Agent: Always-on support for inquiries, scheduling, and service discovery.",
+        "Conversation Records & Insights: Logged interactions for better follow-ups and continuous improvement.",
+      ],
+    },
+    {
+      id: "open-source-voice-agent",
+      icon: Bot,
+      iconColor: "text-emerald-500 border-emerald-500/20 bg-emerald-500/5",
+      badge: "AI Voice",
+      title: "Open Source AI Voice Agent",
+      shortDescription:
+        "Advanced AI voice assistant with embedded widget integration and natural conversation flow.",
+      fullDescription:
+        "Experience next-generation voice interactions with the AI assistant. Features advanced voice processing, contextual understanding, and seamless widget integration.",
+      workflowUrl: "/open-source-agent",
+      isInternalRoute: true,
+      dateCreated: new Date("2026-1-26"),
       steps: [
         {
           icon: Phone,
@@ -384,6 +454,11 @@ function HomePage() {
     },
   ];
 
+  // Sort workflows by latest first (most recent dateCreated)
+  const sortedWorkflows = workflows.sort((a, b) => 
+    new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+  );
+
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans mx-auto max-w-7xl px-8">
       {/* Navigation */}
@@ -417,7 +492,7 @@ function HomePage() {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {workflows.map((workflow) => (
+          {sortedWorkflows.map((workflow) => (
             <Card
               key={workflow.id}
               className="group bg-linear-to-br from-white to-slate-50 border-slate-200 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 relative overflow-hidden flex flex-col"
@@ -475,15 +550,15 @@ function HomePage() {
             <CardHeader className="px-6 sm:px-8 pt-6 sm:pt-8 pb-2 sm:pb-3">
               <div className="flex items-center gap-4 mb-4 ">
                 <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 text-xs font-semibold ring-1 ring-blue-500/20">
-                  {workflows.find((w) => w.id === expandedWorkflow)?.badge}
+                  {sortedWorkflows.find((w) => w.id === expandedWorkflow)?.badge}
                 </span>
               </div>
               <CardTitle className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900">
-                {workflows.find((w) => w.id === expandedWorkflow)?.title}
+                {sortedWorkflows.find((w) => w.id === expandedWorkflow)?.title}
               </CardTitle>
               <CardDescription className="text-base sm:text-lg lg:text-xl mt-4 text-slate-600 leading-relaxed">
                 {
-                  workflows.find((w) => w.id === expandedWorkflow)
+                  sortedWorkflows.find((w) => w.id === expandedWorkflow)
                     ?.fullDescription
                 }
               </CardDescription>
@@ -494,14 +569,14 @@ function HomePage() {
             "
             >
               {/* Problems & Use Cases for all workflows */}
-              {(workflows.find((w) => w.id === expandedWorkflow)?.problems
+              {(sortedWorkflows.find((w) => w.id === expandedWorkflow)?.problems
                 ?.length ?? 0) > 0 && (
                 <div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-3">
                     Problems
                   </h3>
                   <ul className="list-disc pl-5 space-y-1.5 text-sm text-slate-600">
-                    {workflows
+                    {sortedWorkflows
                       .find((w) => w.id === expandedWorkflow)
                       ?.problems.map((p, idx) => (
                         <li key={idx}>{p}</li>
@@ -510,14 +585,14 @@ function HomePage() {
                 </div>
               )}
 
-              {(workflows.find((w) => w.id === expandedWorkflow)?.useCases
+              {(sortedWorkflows.find((w) => w.id === expandedWorkflow)?.useCases
                 ?.length ?? 0) > 0 && (
                 <div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-3">
                     Use Cases
                   </h3>
                   <ul className="list-disc pl-5 space-y-1.5 text-sm text-slate-600">
-                    {workflows
+                    {sortedWorkflows
                       .find((w) => w.id === expandedWorkflow)
                       ?.useCases?.map((u, idx) => (
                         <li key={idx}>{u}</li>
@@ -527,14 +602,14 @@ function HomePage() {
               )}
 
               {/* Key Steps */}
-              {(workflows.find((w) => w.id === expandedWorkflow)?.steps
+              {(sortedWorkflows.find((w) => w.id === expandedWorkflow)?.steps
                 ?.length ?? 0) > 0 && (
                 <div>
                   <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">
                     User Manual Steps
                   </h3>
                   <div className="grid gap-3 sm:grid-cols-1 lg:grid-cols-2">
-                    {workflows
+                    {sortedWorkflows
                       .find((w) => w.id === expandedWorkflow)
                       ?.steps?.map((step, idx) => {
                         const StepIcon = step.icon;
@@ -562,8 +637,8 @@ function HomePage() {
               )}
 
               {/* Launch Button */}
-              {workflows.find((w) => w.id === expandedWorkflow)
-                ?.workflowUrl && (
+              {sortedWorkflows.find((w) => w.id === expandedWorkflow)
+                ?.workflowUrl && expandedWorkflow !== "gmail-application" && (
                 <Button
                   size="lg"
                   className="w-full h-12 sm:h-14 lg:h-16 text-base sm:text-lg lg:text-xl font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-all duration-200"
@@ -571,17 +646,17 @@ function HomePage() {
                 >
                   <a
                     href={
-                      workflows.find((w) => w.id === expandedWorkflow)
+                      sortedWorkflows.find((w) => w.id === expandedWorkflow)
                         ?.workflowUrl
                     }
                     target={
-                      workflows.find((w) => w.id === expandedWorkflow)
+                      sortedWorkflows.find((w) => w.id === expandedWorkflow)
                         ?.isInternalRoute
                         ? "_self"
                         : "_blank"
                     }
                     rel={
-                      workflows.find((w) => w.id === expandedWorkflow)
+                      sortedWorkflows.find((w) => w.id === expandedWorkflow)
                         ?.isInternalRoute
                         ? undefined
                         : "noopener noreferrer"

@@ -41,7 +41,6 @@ import {
   Building,
   GraduationCap,
   Briefcase,
-  Info,
   ArrowLeft,
 } from "lucide-react";
 import { URLS } from "@/constants";

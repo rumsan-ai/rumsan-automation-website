@@ -1,7 +1,5 @@
 "use client";
 
-import type React from "react";
-
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,9 +20,7 @@ import {
   AlertCircle,
   XCircle,
   Eye,
-  Building,
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import {
   Select,
   SelectContent,
@@ -46,19 +42,6 @@ interface ClaimData {
   selectedIssue: string; // Added for the new issue selection
   selectedResolution: string; // Added for the new resolution selection
   desiredResolution: string; // Added for custom resolution input
-}
-
-interface AnalysisData {
-  status: string;
-  confidence: number;
-  extractedData?: {
-    amount?: string;
-    date?: string;
-    vendor?: string;
-    items?: string[];
-  };
-  recommendations?: string[];
-  issues?: string[];
 }
 
 interface WebhookProductsResponse {
@@ -169,17 +152,12 @@ export function ClaimsPortal() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [redirectCountdown, setRedirectCountdown] = useState(5);
   const [currentStep, setCurrentStep] = useState(0); // 0 = start claim, 1 = upload, 2 = product, 3 = issue, 4 = resolution
   const [claimStarted, setClaimStarted] = useState(false);
-  const [invoicePreview, setInvoicePreview] = useState<string | null>(null);
-  const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [resumeUrl, setResumeUrl] = useState<string | null>(null);
   const [executionId, setExecutionId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast } = useToast();
 
   const [webhookProducts, setWebhookProducts] = useState<string[]>([]); // Added state for webhook products
   const [webhookResponse, setWebhookResponse] = useState<string>(""); // Added state to store webhook response from describe issue step
@@ -247,57 +225,6 @@ export function ClaimsPortal() {
   const handleGoBack = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
-      toast({
-        title: "Navigated back",
-        description: "Returned to previous step",
-      });
-    }
-  };
-
-  const handleGoNext = () => {
-    if (currentStep < 4) {
-      // Validate current step before proceeding
-      if (currentStep === 0 && !claimStarted) {
-        toast({
-          title: "Please start claim first",
-          description: "Click 'Start Claim' to begin the process",
-          variant: "destructive",
-        });
-        return;
-      }
-      if (currentStep === 1 && !claimData.invoice) {
-        toast({
-          title: "Please upload invoice",
-          description: "Upload your invoice to continue",
-          variant: "destructive",
-        });
-        return;
-      }
-      if (
-        currentStep === 2 &&
-        (claimData.products.length === 0 || !claimData.supportType)
-      ) {
-        toast({
-          title: "Please select products and support type",
-          description: "Select affected products and support type to continue",
-          variant: "destructive",
-        });
-        return;
-      }
-      if (currentStep === 3 && claimData.issueDescription.length === 0) {
-        toast({
-          title: "Please describe the issue",
-          description: "Provide a description of the problem to continue",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      setCurrentStep(currentStep + 1);
-      toast({
-        title: "Navigated forward",
-        description: "Moved to next step",
-      });
     }
   };
 
@@ -308,7 +235,6 @@ export function ClaimsPortal() {
     !showInvalidInvoiceDialog &&
     !showWarrantyAvailableDialog &&
     !isSubmitting;
-  const canGoNext = false; // Disabled next button completely
 
   const handleStartClaim = async () => {
     setIsSubmitting(true);
@@ -346,30 +272,14 @@ export function ClaimsPortal() {
 
         setClaimStarted(true);
         setCurrentStep(1); // Move to upload invoice step
-
-        toast({
-          title: "Claim started",
-          description:
-            "Your claim has been initiated. Please proceed with uploading your invoice.",
-        });
       } else {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
       if (error instanceof TypeError && error.message.includes("fetch")) {
-        toast({
-          title: "Network Error",
-          description:
-            "Unable to connect to the server. Please check your internet connection and try again.",
-          variant: "destructive",
-        });
+        // Network error - silent handling
       } else {
-        toast({
-          title: "Failed to start claim",
-          description:
-            "There was an error starting your claim. Please try again.",
-          variant: "destructive",
-        });
+        // Failed to start claim - silent handling
       }
     } finally {
       setIsSubmitting(false);
@@ -382,17 +292,6 @@ export function ClaimsPortal() {
     const file = event.target.files?.[0];
     if (file) {
       setClaimData((prev) => ({ ...prev, invoice: file }));
-
-      // Create object URL for preview (works better for PDFs and images)
-      const objectUrl = URL.createObjectURL(file);
-      setInvoicePreview(objectUrl);
-
-      // Skip the separate analysis call since it's also failing
-      // Analysis can be done in the main workflow instead
-      toast({
-        title: "Invoice uploaded",
-        description: `${file.name} has been uploaded successfully.`,
-      });
     }
   };
 
@@ -531,7 +430,6 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
         }
 
         setIsSubmitted(true);
-        setShowSuccessMessage(true);
 
         // Start countdown timer
         const countdownInterval = setInterval(() => {
@@ -542,7 +440,6 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
               setCurrentStep(0);
               setClaimStarted(false);
               setIsSubmitted(false);
-              setShowSuccessMessage(false);
               setClaimData({
                 invoice: null,
                 products: [],
@@ -561,7 +458,6 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
               setWebhookProducts([]);
               setResumeUrl(null);
               setExecutionId(null);
-              setInvoicePreview(null);
               setRedirectCountdown(5);
               setWarrantyStatus(null); // Reset warranty status
               setUserAcceptsCharges(null); // Reset user accepts charges
@@ -574,37 +470,14 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
             return prev - 1;
           });
         }, 1000);
-
-        toast({
-          title: "Claim submitted successfully",
-          description:
-            "Your claim has been sent for review. You'll receive updates via email.",
-        });
       } else {
         throw new Error("Failed to submit claim");
       }
     } catch (error) {
-      toast({
-        title: "Submission failed",
-        description:
-          "There was an error submitting your claim. Please try again.",
-        variant: "destructive",
-      });
+      // Submission failed - silent handling
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const canSubmit = () => {
-    return (
-      claimStarted &&
-      claimData.invoice !== null &&
-      claimData.products.length > 0 &&
-      claimData.supportType.length > 0 &&
-      claimData.issueDescription.length > 0 &&
-      claimData.resolutionSought.length > 0 &&
-      claimData.notificationEmail.length > 0
-    );
   };
 
   const handleContinueToProducts = async () => {
@@ -614,12 +487,6 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
 
       try {
         if (!resumeUrl) {
-          toast({
-            title: "Workflow Error",
-            description:
-              "Resume URL not available. Please restart the claim process.",
-            variant: "destructive",
-          });
           setIsSubmitting(false);
           return;
         }
@@ -762,25 +629,13 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
             !showWarrantyAvailableDialog
           ) {
             setCurrentStep(2);
-            toast({
-              title: "Invoice uploaded successfully",
-              description: "Please select the affected products.",
-            });
           }
         } else {
-          toast({
-            title: "Upload failed",
-            description: "Failed to upload invoice. Please try again.",
-            variant: "destructive",
-          });
+          // Upload failed - silent handling
         }
       } catch (error) {
         console.error("Error uploading invoice:", error);
-        toast({
-          title: "Upload failed",
-          description: "Failed to upload invoice. Please try again.",
-          variant: "destructive",
-        });
+        // Upload failed - silent handling
       } finally {
         setIsSubmitting(false);
       }
@@ -792,11 +647,6 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
 
     if (proceed) {
       setCurrentStep(2);
-      toast({
-        title: "Warranty confirmed",
-        description:
-          "Your warranty is active. Please select the affected products.",
-      });
     } else {
       // Reset to initial state
       setCurrentStep(0);
@@ -821,17 +671,10 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
       setWebhookResponse("");
       setResumeUrl(null);
       setExecutionId(null);
-      setInvoicePreview(null);
       setCustomerName("");
       setVendor("");
       setInvoiceNumber("");
       setInvoiceId("");
-
-      toast({
-        title: "Thank you for visiting",
-        description:
-          "Feel free to contact us if you have any questions about your warranty.",
-      });
     }
   };
 
@@ -841,11 +684,6 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
 
     if (acceptCharges) {
       setCurrentStep(2);
-      toast({
-        title: "Proceeding with expired warranty",
-        description:
-          "Additional charges may apply. Please select the affected products.",
-      });
     } else {
       // Reset to initial state and show thank you message
       setCurrentStep(0);
@@ -870,17 +708,10 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
       setWebhookResponse("");
       setResumeUrl(null);
       setExecutionId(null);
-      setInvoicePreview(null);
       setCustomerName("");
       setVendor("");
       setInvoiceNumber("");
       setInvoiceId("");
-
-      toast({
-        title: "Thank you for visiting",
-        description:
-          "We understand you don't wish to proceed with expired warranty charges. Feel free to contact us if you have any questions.",
-      });
     }
   };
 
@@ -910,27 +741,15 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
     setWebhookResponse("");
     setResumeUrl(null);
     setExecutionId(null);
-    setInvoicePreview(null);
     setCustomerName("");
     setVendor("");
     setInvoiceNumber("");
     setInvoiceId("");
-
-    toast({
-      title: "Invoice Invalid",
-      description:
-        "Please check your invoice and try again with a valid invoice or receipt.",
-      variant: "destructive",
-    });
   };
 
   const handleContinueToIssue = async () => {
     if (claimData.products.length > 0 && claimData.supportType) {
       setCurrentStep(3);
-      toast({
-        title: "Proceeding to issue description",
-        description: "Please describe the problem you're experiencing.",
-      });
     }
   };
 
@@ -943,12 +762,6 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
       setIsSubmitting(true);
       try {
         if (!resumeUrl) {
-          toast({
-            title: "Workflow Error",
-            description:
-              "Resume URL not available. Please restart the claim process.",
-            variant: "destructive",
-          });
           setIsSubmitting(false);
           return;
         }
@@ -1010,19 +823,11 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
           }
 
           setCurrentStep(4);
-          toast({
-            title: "Proceeding to resolution",
-            description: "Please provide your desired resolution and email.",
-          });
         } else {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
       } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to proceed. Please try again.",
-          variant: "destructive",
-        });
+        // Error - silent handling
       } finally {
         setIsSubmitting(false);
       }
@@ -1224,13 +1029,9 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                         <Button
                           onClick={handleContinueToProducts}
                           className="w-full"
-                          disabled={isAnalyzing || isSubmitting}
+                          disabled={isSubmitting}
                         >
-                          {isSubmitting
-                            ? "Processing..."
-                            : isAnalyzing
-                            ? "Analyzing Invoice..."
-                            : "Continue"}
+                          {isSubmitting ? "Processing..." : "Continue"}
                         </Button>
                       )}
                   </div>
