@@ -27,6 +27,9 @@ import {
   Mic,
   Phone,
   Bot,
+  Users,
+  Brain,
+  Database,
 } from "lucide-react";
 import { useState } from "react";
 import React from "react";
@@ -401,55 +404,146 @@ function HomePage() {
     },
     {
       id: "open-source-voice-agent",
-      icon: Bot,
-      iconColor: "text-emerald-500 border-emerald-500/20 bg-emerald-500/5",
-      badge: "AI Voice",
-      title: "Open Source AI Voice Agent",
+      icon: Mic,
+      iconColor: "text-green-500 border-green-500/20 bg-green-500/5",
+      badge: "Open Source",
+      title: "Open Source Voice Agent",
       shortDescription:
-        "Advanced AI voice assistant with embedded widget integration and natural conversation flow.",
+        "Free and open-source AI voice agent with full customization and self-hosting capabilities.",
       fullDescription:
-        "Experience next-generation voice interactions with the AI assistant. Features advanced voice processing, contextual understanding, and seamless widget integration.",
+        "Deploy your own AI voice agent with complete control. Built on open-source technologies, this solution offers full customization, privacy, and scalability for your voice automation needs.",
       workflowUrl: "/open-source-agent",
       isInternalRoute: true,
-      dateCreated: new Date("2026-1-26"),
-      steps: [
-        {
-          icon: Phone,
-          title: "Start Voice Call",
-          description: "Initiate a voice conversation with the AI agent.",
-        },
-        {
-          icon: Mic,
-          title: "Voice Recognition",
-          description:
-            "AI processes your speech in real-time with high accuracy.",
-        },
-        {
-          icon: MessageCircle,
-          title: "Intelligent Response",
-          description:
-            "Agent provides contextual responses through voice and text.",
-        },
-        {
-          icon: FileText,
-          title: "Conversation Transcript",
-          description:
-            "View complete conversation history with user and agent messages.",
-        },
-      ],
+      dateCreated: new Date("2026-1-15"),
       problems: [
-        "Complex services like AI, blockchain, and Web3 are hard to explain clearly through text alone.",
-        "Manual handling of inquiries and scheduling leads to delays and limited availability.",
-        "Clients across regions need 24/7 access to service information and support.",
-        "Text-based communication creates accessibility and language barriers.",
-        "Client conversations are not always recorded for follow-ups and insights.",
+        "Proprietary voice solutions lock you into expensive vendor contracts",
+        "Privacy concerns with third-party voice processing services",
+        "Limited customization options in commercial voice platforms",
+        "High costs for scaling voice automation across teams",
+        "Lack of transparency in how voice data is processed and stored",
       ],
       useCases: [
-        "Voice-Based Client Support: Natural conversations to explain Rumsan's services and products.",
-        "Consultation & Demo Scheduling: Easy voice booking for consultations and demos of Rahat, eSatya, and Hamro LifeBank.",
-        "Simplifying Technology Discussions: Clear voice explanations for AI, blockchain, and Web3 solutions.",
-        "24/7 Virtual Org Agent: Always-on support for inquiries, scheduling, and service discovery.",
-        "Conversation Records & Insights: Logged interactions for better follow-ups and continuous improvement.",
+        "Organizations requiring full data privacy and control",
+        "Developers building custom voice experiences",
+        "Companies wanting to avoid vendor lock-in",
+        "Teams needing to integrate voice AI with existing systems",
+        "Enterprises with compliance requirements for voice data handling",
+        "Startups seeking cost-effective voice automation solutions",
+      ],
+    },
+    {
+      id: "community-tool",
+      icon: Users,
+      iconColor: "text-blue-500 border-blue-500/20 bg-blue-500/5",
+      badge: "ML Pipeline",
+      title: "Community Tool",
+      shortDescription:
+        "A comprehensive ML pipeline for cleaning, normalizing, and classifying data with automated header extraction and fuzzy matching.",
+      fullDescription:
+        "A comprehensive machine learning pipeline for cleaning, normalizing, and classifying data. It automates header extraction, fuzzy matching, and classification using Celery for asynchronous task management and PostgreSQL for persistent storage, delivering structured, high-confidence results ready for downstream applications.",
+      workflowUrl: PAGES.COMMUNITY_TOOL,
+      isInternalRoute: false,
+      dateCreated: new Date("2026-3-10"),
+      problems: [
+        "Manual data cleaning and standardization is time-consuming",
+        "Inconsistent headers and duplicate entries across datasets",
+        "Slow processing for large datasets without asynchronous handling",
+        "Lack of structured outputs for downstream applications",
+      ],
+      useCases: [
+        "Data Cleaning & Normalization: Preprocess messy CSV, JSON, or database inputs",
+        "Header Extraction: Automatically detect and standardize column headers",
+        "Fuzzy Matching: Match similar entries across datasets efficiently",
+        "Classification: Assign categories using ML models with confidence scoring",
+        "Asynchronous Task Handling: Process large datasets via Celery + Redis workers",
+        "Persistent Storage: Save cleaned data, mappings, and confidence scores in PostgreSQL",
+        "Downstream Integration: Export structured results for analytics, reporting, or other applications",
+      ],
+    },
+    {
+      id: "ai-quiz",
+      icon: Brain,
+      iconColor: "text-purple-500 border-purple-500/20 bg-purple-500/5",
+      badge: "AI Quiz Platform",
+      title: "AI Quiz Challenge",
+      shortDescription:
+        "Transform documents into interactive quizzes effortlessly. Upload content, generate summaries, and automatically create AI-powered quizzes.",
+      fullDescription:
+        "A FastAPI-based AI quiz platform with full document management. Upload, delete, or link files/drive URLs, then generate quizzes and questions automatically. Built with Redis, PostgreSQL, Qdrant, and Alembic, it delivers fast, scalable, and reliable operations for AI-driven quiz creation and management. Transform documents into interactive quizzes effortlessly, making learning and assessment seamless and multilingual-ready.",
+      workflowUrl: PAGES.AI_QUIZ,
+      isInternalRoute: false,
+      dateCreated: new Date("2026-3-15"),
+      problems: [
+        "Manual quiz creation from documents is slow and error-prone",
+        "Managing documents and quiz content separately is inefficient",
+        "Retrieving and generating relevant questions quickly at scale can be difficult",
+        "Schema changes risk breaking production workflows",
+      ],
+      useCases: [
+        "Document Management: Upload, delete, or link files/drive URLs for quiz content",
+        "AI-Powered Quiz & Question Generation: Automatically create quizzes and questions from documents",
+        "High-Speed Access: Redis caching for fast retrieval and response times",
+        "Persistent Storage: PostgreSQL stores quizzes, questions, and document metadata",
+        "Semantic Search & Recommendations: Qdrant enables smart question selection and content understanding",
+        "Database Migrations: Alembic ensures smooth schema updates and version control",
+        "Content-based quizzes, automated learning assessments, semantic question generation, and multilingual support",
+      ],
+    },
+    {
+      id: "sql-quiz",
+      icon: Database,
+      iconColor: "text-emerald-500 border-emerald-500/20 bg-emerald-500/5",
+      badge: "Database",
+      title: "SQL Semantic Quiz",
+      shortDescription:
+        "Sharpen your SQL skills and query databases with high accuracy and semantic understanding to return precise and contextually equivalent results.",
+      fullDescription:
+        "SQL Semantic Quiz Challenge – Sharpen your SQL skills and query databases with high accuracy and semantic understanding to return precise and contextually equivalent results. Practice real-world scenarios, master complex queries, and ensure your results match the intent of your questions every time. It structurally returns SQL from the query of user. You can also return chart from database.",
+      workflowUrl: PAGES.SQL_QUIZ,
+      isInternalRoute: false,
+      dateCreated: new Date("2026-3-20"),
+      problems: [
+        "Ambiguous results from traditional queries: Standard SQL often fails to capture the user's intent, leading to incorrect or incomplete results.",
+        "Difficulty translating business questions into queries: Users struggle to convert complex, real-world requirements into precise SQL statements.",
+        "Limited semantic understanding in learning resources: Most SQL tutorials focus on syntax, not on context-aware querying.",
+        "Inefficient query optimization: Queries may work but are not optimized to return accurate results quickly in complex databases.",
+        "Assessing practical proficiency: Hard to measure if a learner can produce semantically accurate and precise outputs in realistic scenarios.",
+      ],
+      useCases: [
+        "Data Analysts: Retrieve exact, contextually relevant insights from large datasets.",
+        "Database Administrators: Validate queries to ensure they return precise results while maintaining performance.",
+        "Students & Learners: Practice translating real-world questions into semantically correct SQL queries.",
+        "Developers: Build applications that require accurate and context-aware database interactions.",
+        "Recruiters & Managers: Assess candidates' ability to produce high-accuracy, semantically correct queries under realistic conditions.",
+        "Teams & Enterprises: Conduct semantic SQL competency assessments to improve overall data querying skills.",
+      ],
+    },
+    {
+      id: "vox-flow",
+      icon: Phone,
+      iconColor: "text-indigo-500 border-indigo-500/20 bg-indigo-500/5",
+      badge: "Voice Flow",
+      title: "VoxFlow",
+      shortDescription:
+        "Generate, transcribe, and transform audio across languages. Upload your audio and instantly convert it into any language.",
+      fullDescription:
+        "Voxflow is a modern web app that lets you generate, transcribe, and transform audio across languages. Upload your audio and instantly convert it into any language, creating seamless multilingual audio experiences with a scalable, responsive, and developer-friendly interface.",
+      workflowUrl: "/voxFlow",
+      isInternalRoute: true,
+      dateCreated: new Date("2026-3-25"),
+      problems: [
+        "Language Barriers: Makes audio understandable across different languages",
+        "Manual Transcription & Translation Effort: Automates both processes efficiently",
+        "Multiple Tool Dependency: Combines generation, transcription, and translation in one platform",
+        "Inconsistent UI Development: Uses reusable components for faster, consistent design",
+        "Device Compatibility Issues: Ensures a fully responsive experience across all devices",
+      ],
+      useCases: [
+        "Content Creation: Generate multilingual voiceovers for videos, podcasts, and social media",
+        "Global Communication: Translate and adapt audio for international audiences",
+        "Meeting & Lecture Transcription: Convert spoken content into text for notes and documentation",
+        "Customer Support: Translate and transcribe voice interactions for better service",
+        "Accessibility: Provide speech-to-text and multilingual audio for inclusive experiences",
       ],
     },
   ];

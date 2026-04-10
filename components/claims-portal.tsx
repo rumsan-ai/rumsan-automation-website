@@ -840,8 +840,8 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
     : [];
   const currentResolutionOptions = claimData.supportType
     ? RESOLUTION_OPTIONS[
-        claimData.supportType as keyof typeof RESOLUTION_OPTIONS
-      ]
+    claimData.supportType as keyof typeof RESOLUTION_OPTIONS
+    ]
     : [];
 
   return (
@@ -857,11 +857,10 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
               return (
                 <div
                   key={step.id}
-                  className={`flex items-center gap-1.5 p-1.5 rounded-md border transition-all duration-200 ${
-                    isCompleted 
-                      ? "bg-green-50 border-green-200" 
+                  className={`flex items-center gap-1.5 p-1.5 rounded-md border transition-all duration-200 ${isCompleted
+                      ? "bg-green-50 border-green-200"
                       : "bg-slate-50 border-slate-200 hover:border-slate-300"
-                  }`}
+                    }`}
                 >
                   <div className="shrink-0">
                     {isCompleted ? (
@@ -873,16 +872,14 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className={`text-xs font-semibold truncate ${
-                      isCompleted ? "text-green-700" : "text-slate-700"
-                    }`}>{step.title}</p>
+                    <p className={`text-xs font-semibold truncate ${isCompleted ? "text-green-700" : "text-slate-700"
+                      }`}>{step.title}</p>
                     <p className="text-xs text-slate-500 truncate">
                       {step.description}
                     </p>
                   </div>
-                  <Icon className={`w-4 h-4 shrink-0 ${
-                    isCompleted ? "text-green-600" : "text-slate-400"
-                  }`} />
+                  <Icon className={`w-4 h-4 shrink-0 ${isCompleted ? "text-green-600" : "text-slate-400"
+                    }`} />
                 </div>
               );
             })}
@@ -925,11 +922,10 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
 
               {warrantyStatus && (
                 <div
-                  className={`flex items-center gap-1 p-1 rounded border shadow-sm ${
-                    warrantyStatus === "available"
+                  className={`flex items-center gap-1 p-1 rounded border shadow-sm ${warrantyStatus === "available"
                       ? "bg-linear-to-r from-green-50 to-green-100 border-green-300 text-green-800"
                       : "bg-linear-to-r from-red-50 to-red-100 border-red-300 text-red-800"
-                  }`}
+                    }`}
                 >
                   <div className={`p-0.5 rounded-sm ${warrantyStatus === "available" ? "bg-green-200" : "bg-red-200"}`}>
                     {warrantyStatus === "available" ? (
@@ -1328,14 +1324,14 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                       claimData.issueType !== "other") ||
                       (claimData.issueType === "other" &&
                         claimData.issueDescription.length > 0)) && (
-                      <Button
-                        onClick={handleContinueToResolution}
-                        className="w-full"
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? "Processing..." : "Continue"}
-                      </Button>
-                    )}
+                        <Button
+                          onClick={handleContinueToResolution}
+                          className="w-full"
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? "Processing..." : "Continue"}
+                        </Button>
+                      )}
                   </div>
                 )}
 
@@ -1366,7 +1362,7 @@ ${webhookResponse ? `Analysis:\n${webhookResponse}` : ""}
                           <SelectContent className="z-50 bg-blue-50 border-2 border-blue-400 shadow-2xl">
                             {(
                               RESOLUTION_OPTIONS[
-                                claimData.supportType as keyof typeof RESOLUTION_OPTIONS
+                              claimData.supportType as keyof typeof RESOLUTION_OPTIONS
                               ] || RESOLUTION_OPTIONS["Troubleshooting"]
                             ).map((resolution) => (
                               <SelectItem

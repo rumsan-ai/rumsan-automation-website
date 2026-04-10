@@ -432,9 +432,8 @@ export default function CVUploader() {
     }
 
     if (file.size > maxFileSize) {
-      return `File size too large. Maximum size is ${
-        maxFileSize / (1024 * 1024)
-      }MB`;
+      return `File size too large. Maximum size is ${maxFileSize / (1024 * 1024)
+        }MB`;
     }
 
     return null;
@@ -571,11 +570,11 @@ export default function CVUploader() {
         prev.map((f) =>
           f.id === fileId
             ? {
-                ...f,
-                status: "success",
-                progress: 100,
-                parsedData: result,
-              }
+              ...f,
+              status: "success",
+              progress: 100,
+              parsedData: result,
+            }
             : f
         )
       );
@@ -597,11 +596,11 @@ export default function CVUploader() {
         prev.map((f) =>
           f.id === fileId
             ? {
-                ...f,
-                status: "error",
-                progress: 0,
-                error: errorMessage,
-              }
+              ...f,
+              status: "error",
+              progress: 0,
+              error: errorMessage,
+            }
             : f
         )
       );
@@ -919,19 +918,17 @@ export default function CVUploader() {
               <CardContent className="space-y-1 pt-1 pb-0">
                 {data.evaluation.decision && (
                   <div
-                    className={`p-2 rounded-lg border-2 shadow-sm ${
-                      data.evaluation.decision === "Accept"
+                    className={`p-2 rounded-lg border-2 shadow-sm ${data.evaluation.decision === "Accept"
                         ? "bg-linear-to-r from-green-50 to-emerald-50 border-green-300"
                         : "bg-linear-to-r from-red-50 to-rose-50 border-red-300"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-2">
                       <div
-                        className={`p-1.5 rounded-full ${
-                          data.evaluation.decision === "Accept"
+                        className={`p-1.5 rounded-full ${data.evaluation.decision === "Accept"
                             ? "bg-green-100"
                             : "bg-red-100"
-                        }`}
+                          }`}
                       >
                         {data.evaluation.decision === "Accept" ? (
                           <CheckCircle className="w-4 h-4 text-green-600" />
@@ -941,11 +938,10 @@ export default function CVUploader() {
                       </div>
                       <div>
                         <h3
-                          className={`text-base font-bold ${
-                            data.evaluation.decision === "Accept"
+                          className={`text-base font-bold ${data.evaluation.decision === "Accept"
                               ? "text-green-900"
                               : "text-red-900"
-                          }`}
+                            }`}
                         >
                           Decision: {data.evaluation.decision || "Pending"}
                         </h3>
@@ -1133,14 +1129,12 @@ export default function CVUploader() {
           <div className="max-w-2xl mx-auto mb-3">
             <div className="flex items-center justify-between mb-2 relative px-4">
               <div
-                className={`flex flex-col items-center gap-1 ${
-                  selectedJobPosition ? "text-blue-600" : "text-slate-400"
-                } z-10 relative`}
+                className={`flex flex-col items-center gap-1 ${selectedJobPosition ? "text-blue-600" : "text-slate-400"
+                  } z-10 relative`}
               >
                 <div
-                  className={`w-7 h-7 rounded-full ${
-                    selectedJobPosition ? "bg-blue-600" : "bg-slate-300"
-                  } text-white flex items-center justify-center transition-all shadow-sm`}
+                  className={`w-7 h-7 rounded-full ${selectedJobPosition ? "bg-blue-600" : "bg-slate-300"
+                    } text-white flex items-center justify-center transition-all shadow-sm`}
                 >
                   {selectedJobPosition ? (
                     <CheckCircle className="w-4 h-4" />
@@ -1153,14 +1147,12 @@ export default function CVUploader() {
                 </span>
               </div>
               <div
-                className={`flex flex-col items-center gap-1 ${
-                  files.length > 0 ? "text-indigo-600" : "text-slate-400"
-                } z-10 relative`}
+                className={`flex flex-col items-center gap-1 ${files.length > 0 ? "text-indigo-600" : "text-slate-400"
+                  } z-10 relative`}
               >
                 <div
-                  className={`w-7 h-7 rounded-full ${
-                    files.length > 0 ? "bg-indigo-600" : "bg-slate-300"
-                  } text-white flex items-center justify-center transition-all shadow-sm`}
+                  className={`w-7 h-7 rounded-full ${files.length > 0 ? "bg-indigo-600" : "bg-slate-300"
+                    } text-white flex items-center justify-center transition-all shadow-sm`}
                 >
                   {files.length > 0 ? (
                     <CheckCircle className="w-4 h-4" />
@@ -1173,18 +1165,16 @@ export default function CVUploader() {
                 </span>
               </div>
               <div
-                className={`flex flex-col items-center gap-1 ${
-                  files.some((f) => f.status === "success")
+                className={`flex flex-col items-center gap-1 ${files.some((f) => f.status === "success")
                     ? "text-purple-600"
                     : "text-slate-400"
-                } z-10 relative`}
+                  } z-10 relative`}
               >
                 <div
-                  className={`w-7 h-7 rounded-full ${
-                    files.some((f) => f.status === "success")
+                  className={`w-7 h-7 rounded-full ${files.some((f) => f.status === "success")
                       ? "bg-purple-600"
                       : "bg-slate-300"
-                  } text-white flex items-center justify-center transition-all shadow-sm`}
+                    } text-white flex items-center justify-center transition-all shadow-sm`}
                 >
                   {files.some((f) => f.status === "success") ? (
                     <CheckCircle className="w-4 h-4" />
@@ -1206,9 +1196,8 @@ export default function CVUploader() {
                     <div
                       className="h-full bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 transition-all duration-500 ease-out rounded-full"
                       style={{
-                        width: `${
-                          files.some((f) => f.status === "success") ? 100 : 50
-                        }%`,
+                        width: `${files.some((f) => f.status === "success") ? 100 : 50
+                          }%`,
                       }}
                     ></div>
                   </div>
@@ -1402,11 +1391,10 @@ export default function CVUploader() {
                 <div
                   className={`
                         relative border-2 border-dashed rounded-xl transition-all duration-300 cursor-pointer
-                        ${
-                          isDragOver
-                            ? "border-blue-500 bg-blue-50 shadow-lg scale-105"
-                            : "border-slate-300 hover:border-blue-400 hover:bg-slate-50 hover:shadow-md"
-                        }
+                        ${isDragOver
+                      ? "border-blue-500 bg-blue-50 shadow-lg scale-105"
+                      : "border-slate-300 hover:border-blue-400 hover:bg-slate-50 hover:shadow-md"
+                    }
                       `}
                   onDrop={handleDrop}
                   onDragOver={handleDragOver}
@@ -1520,22 +1508,22 @@ export default function CVUploader() {
                               <div className="flex items-center gap-2 shrink-0">
                                 {uploadedFile.file.type ===
                                   "application/pdf" && (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      const fileUrl = URL.createObjectURL(
-                                        uploadedFile.file
-                                      );
-                                      window.open(fileUrl, "_blank");
-                                    }}
-                                    className="h-8 w-8 p-0 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-all rounded-lg shadow-sm hover:shadow-md"
-                                    title="Preview PDF"
-                                  >
-                                    <Eye className="w-4 h-4" />
-                                  </Button>
-                                )}
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const fileUrl = URL.createObjectURL(
+                                          uploadedFile.file
+                                        );
+                                        window.open(fileUrl, "_blank");
+                                      }}
+                                      className="h-8 w-8 p-0 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-all rounded-lg shadow-sm hover:shadow-md"
+                                      title="Preview PDF"
+                                    >
+                                      <Eye className="w-4 h-4" />
+                                    </Button>
+                                  )}
                                 <Button
                                   variant="ghost"
                                   size="sm"

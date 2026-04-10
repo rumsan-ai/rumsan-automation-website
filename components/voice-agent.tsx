@@ -204,16 +204,14 @@ export function VoiceAgent({
           {transcript.map((msg: any, msgIndex: number) => (
             <div
               key={msgIndex}
-              className={`flex gap-3 ${
-                msg.role === "user" ? "flex-row-reverse" : "flex-row"
-              }`}
+              className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"
+                }`}
             >
               <div
-                className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                  msg.role === "user"
+                className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.role === "user"
                     ? "bg-blue-500 text-white"
                     : "bg-purple-500 text-white"
-                }`}
+                  }`}
               >
                 {msg.role === "user" ? (
                   <User className="h-4 w-4" />
@@ -222,25 +220,22 @@ export function VoiceAgent({
                 )}
               </div>
               <div
-                className={`flex-1 max-w-[85%] ${
-                  msg.role === "user" ? "text-right" : "text-left"
-                }`}
+                className={`flex-1 max-w-[85%] ${msg.role === "user" ? "text-right" : "text-left"
+                  }`}
               >
                 <div
-                  className={`inline-block p-3 rounded-2xl shadow-sm ${
-                    msg.role === "user"
+                  className={`inline-block p-3 rounded-2xl shadow-sm ${msg.role === "user"
                       ? "bg-blue-500 text-white rounded-br-md"
                       : "bg-gray-100 text-gray-800 rounded-bl-md"
-                  }`}
+                    }`}
                 >
                   <p className="text-sm leading-relaxed">
                     {safeString(msg.content)}
                   </p>
                 </div>
                 <p
-                  className={`text-xs text-gray-500 mt-1 ${
-                    msg.role === "user" ? "text-right" : "text-left"
-                  }`}
+                  className={`text-xs text-gray-500 mt-1 ${msg.role === "user" ? "text-right" : "text-left"
+                    }`}
                 >
                   {msg.role === "user" ? "You" : "Rumsan AI"}
                 </p>
@@ -258,16 +253,14 @@ export function VoiceAgent({
           {transcript.transcript.map((msg: any, msgIndex: number) => (
             <div
               key={msgIndex}
-              className={`flex gap-3 ${
-                msg.role === "user" ? "flex-row-reverse" : "flex-row"
-              }`}
+              className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"
+                }`}
             >
               <div
-                className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center relative ${
-                  msg.role === "user"
+                className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center relative ${msg.role === "user"
                     ? "bg-blue-500 text-white"
                     : "bg-linear-to-r from-purple-500 to-indigo-600 text-white"
-                }`}
+                  }`}
               >
                 {msg.role === "user" ? (
                   <User className="h-4 w-4" />
@@ -279,25 +272,22 @@ export function VoiceAgent({
                 )}
               </div>
               <div
-                className={`flex-1 max-w-[85%] ${
-                  msg.role === "user" ? "text-right" : "text-left"
-                }`}
+                className={`flex-1 max-w-[85%] ${msg.role === "user" ? "text-right" : "text-left"
+                  }`}
               >
                 <div
-                  className={`inline-block p-3 rounded-2xl shadow-sm ${
-                    msg.role === "user"
+                  className={`inline-block p-3 rounded-2xl shadow-sm ${msg.role === "user"
                       ? "bg-blue-500 text-white rounded-br-md"
                       : "bg-gray-100 text-gray-800 rounded-bl-md"
-                  }`}
+                    }`}
                 >
                   <p className="text-sm leading-relaxed">
                     {safeString(msg.content)}
                   </p>
                 </div>
                 <p
-                  className={`text-xs text-gray-500 mt-1 ${
-                    msg.role === "user" ? "text-right" : "text-left"
-                  }`}
+                  className={`text-xs text-gray-500 mt-1 ${msg.role === "user" ? "text-right" : "text-left"
+                    }`}
                 >
                   {msg.role === "user" ? "You" : "Rumsan AI"}
                 </p>
@@ -313,16 +303,14 @@ export function VoiceAgent({
       return (
         <div
           key={index}
-          className={`flex gap-3 ${
-            transcript.role === "user" ? "flex-row-reverse" : "flex-row"
-          }`}
+          className={`flex gap-3 ${transcript.role === "user" ? "flex-row-reverse" : "flex-row"
+            }`}
         >
           <div
-            className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center relative ${
-              transcript.role === "user"
+            className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center relative ${transcript.role === "user"
                 ? "bg-blue-500 text-white"
                 : "bg-linear-to-r from-purple-500 to-indigo-600 text-white"
-            }`}
+              }`}
           >
             {transcript.role === "user" ? (
               <User className="h-4 w-4" />
@@ -334,25 +322,22 @@ export function VoiceAgent({
             )}
           </div>
           <div
-            className={`flex-1 max-w-[85%] ${
-              transcript.role === "user" ? "text-right" : "text-left"
-            }`}
+            className={`flex-1 max-w-[85%] ${transcript.role === "user" ? "text-right" : "text-left"
+              }`}
           >
             <div
-              className={`inline-block p-3 rounded-2xl shadow-sm ${
-                transcript.role === "user"
+              className={`inline-block p-3 rounded-2xl shadow-sm ${transcript.role === "user"
                   ? "bg-blue-500 text-white rounded-br-md"
                   : "bg-gray-100 text-gray-800 rounded-bl-md"
-              }`}
+                }`}
             >
               <p className="text-sm leading-relaxed">
                 {safeString(transcript.content)}
               </p>
             </div>
             <p
-              className={`text-xs text-gray-500 mt-1 ${
-                transcript.role === "user" ? "text-right" : "text-left"
-              }`}
+              className={`text-xs text-gray-500 mt-1 ${transcript.role === "user" ? "text-right" : "text-left"
+                }`}
             >
               {transcript.role === "user" ? "You" : "Rumsan AI"}
             </p>
@@ -439,18 +424,16 @@ export function VoiceAgent({
     <div className="w-full max-w-5xl mx-auto h-full flex flex-col max-h-[calc(100vh-100px)] mt-3">
       {/* Main Voice Agent Card */}
       <Card
-        className={`bg-linear-to-br from-white via-blue-50/30 to-purple-50/30 border-2 shadow-xl flex flex-col overflow-hidden rounded-xl mx-2 max-h-200 transition-all duration-500 ${
-          conversationHistory.length > 0 && callStatus.isConnected
+        className={`bg-linear-to-br from-white via-blue-50/30 to-purple-50/30 border-2 shadow-xl flex flex-col overflow-hidden rounded-xl mx-2 max-h-200 transition-all duration-500 ${conversationHistory.length > 0 && callStatus.isConnected
             ? "border-blue-400/60 shadow-blue-500/20 shadow-2xl"
             : "border-blue-100/50 shadow-blue-500/10"
-        }`}
+          }`}
       >
         <CardHeader
-          className={`text-center ${
-            conversationHistory.length > 0 && callStatus.isConnected
+          className={`text-center ${conversationHistory.length > 0 && callStatus.isConnected
               ? "pb-0 py-1"
               : "pb-1 py-2"
-          }`}
+            }`}
         >
           {!(conversationHistory.length > 0 && callStatus.isConnected) && (
             <div className="flex items-center justify-center gap-2 mb-1">
@@ -471,22 +454,20 @@ export function VoiceAgent({
         </CardHeader>
 
         <CardContent
-          className={`flex flex-col overflow-hidden flex-1 ${
-            conversationHistory.length > 0 && callStatus.isConnected
+          className={`flex flex-col overflow-hidden flex-1 ${conversationHistory.length > 0 && callStatus.isConnected
               ? "space-y-0 py-0 px-2"
               : "space-y-1 py-2 px-6"
-          }`}
+            }`}
         >
           {/* Enhanced Status Display */}
           {!(conversationHistory.length > 0 && callStatus.isConnected) && (
             <div className="flex items-center justify-center gap-2 flex-wrap mb-1">
               <Badge
                 variant={callStatus.isConnected ? "default" : "secondary"}
-                className={`flex items-center gap-0.5 px-1.5 py-0.5 text-xs font-medium transition-all duration-300 ${
-                  callStatus.isConnected
+                className={`flex items-center gap-0.5 px-1.5 py-0.5 text-xs font-medium transition-all duration-300 ${callStatus.isConnected
                     ? "bg-green-500 hover:bg-green-600 shadow-lg shadow-green-500/25 animate-pulse"
                     : "bg-gray-100 text-gray-600"
-                }`}
+                  }`}
               >
                 {callStatus.isConnected ? (
                   <>
@@ -520,11 +501,10 @@ export function VoiceAgent({
 
           {/* Enhanced Controls */}
           <div
-            className={`flex flex-row gap-2 justify-center items-center flex-wrap ${
-              conversationHistory.length > 0 && callStatus.isConnected
+            className={`flex flex-row gap-2 justify-center items-center flex-wrap ${conversationHistory.length > 0 && callStatus.isConnected
                 ? "justify-end mb-2"
                 : ""
-            }`}
+              }`}
           >
             {callStatus.isAgentSpeaking &&
               conversationHistory.length > 0 &&
@@ -541,33 +521,29 @@ export function VoiceAgent({
               onClick={callStatus.isConnected ? stopCall : handleStartCall}
               disabled={isLoading}
               variant={callStatus.isConnected ? "destructive" : "default"}
-              className={`flex items-center gap-1.5 transition-all duration-300 transform hover:scale-105 ${
-                conversationHistory.length > 0 && callStatus.isConnected
+              className={`flex items-center gap-1.5 transition-all duration-300 transform hover:scale-105 ${conversationHistory.length > 0 && callStatus.isConnected
                   ? "px-3 py-1 text-xs rounded-md shadow-md"
                   : "px-5 py-2 text-sm rounded-lg"
-              } ${
-                callStatus.isConnected
+                } ${callStatus.isConnected
                   ? "bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/25 font-medium text-white"
                   : "bg-linear-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg shadow-blue-500/25 text-white font-semibold"
-              }`}
+                }`}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
             >
               {callStatus.isConnected ? (
                 <>
                   <PhoneOff
-                    className={`h-4 w-4 transition-transform duration-300 ${
-                      isHovered ? "scale-110" : ""
-                    }`}
+                    className={`h-4 w-4 transition-transform duration-300 ${isHovered ? "scale-110" : ""
+                      }`}
                   />
                   End Call
                 </>
               ) : (
                 <>
                   <Phone
-                    className={`h-4 w-4 transition-transform duration-300 ${
-                      isHovered ? "scale-110" : ""
-                    }`}
+                    className={`h-4 w-4 transition-transform duration-300 ${isHovered ? "scale-110" : ""
+                      }`}
                   />
                   {isLoading ? "Connecting..." : "Start Call"}
                 </>
@@ -596,11 +572,10 @@ export function VoiceAgent({
 
           {/* Enhanced Transcript Display - Horizontal Layout */}
           <div
-            className={`grid lg:grid-cols-3 flex-1 min-h-0 ${
-              conversationHistory.length > 0 && callStatus.isConnected
+            className={`grid lg:grid-cols-3 flex-1 min-h-0 ${conversationHistory.length > 0 && callStatus.isConnected
                 ? ""
                 : "gap-3"
-            }`}
+              }`}
           >
             {transcripts.length > 0 ? (
               <Card className="bg-white/90 backdrop-blur-sm border-2 border-blue-200/50 shadow-xl lg:col-span-3 flex flex-col min-h-0 flex-1 rounded-xl overflow-hidden">
@@ -632,20 +607,17 @@ export function VoiceAgent({
                         conversationHistory.map((message, index) => (
                           <div
                             key={index}
-                            className={`flex gap-3 ${
-                              message.role === "user"
+                            className={`flex gap-3 ${message.role === "user"
                                 ? "flex-row-reverse"
                                 : "flex-row"
-                            }`}
+                              }`}
                           >
                             <div
-                              className={`shrink-0 rounded-full flex items-center justify-center relative shadow-lg border-2 ${
-                                compactMode ? "w-7 h-7" : "w-9 h-9"
-                              } ${
-                                message.role === "user"
+                              className={`shrink-0 rounded-full flex items-center justify-center relative shadow-lg border-2 ${compactMode ? "w-7 h-7" : "w-9 h-9"
+                                } ${message.role === "user"
                                   ? "bg-linear-to-br from-blue-500 to-blue-600 text-white border-blue-300/30 shadow-blue-200/50"
                                   : "bg-linear-to-br from-purple-500 via-indigo-600 to-purple-600 text-white border-purple-300/30 shadow-purple-200/50"
-                              }`}
+                                }`}
                             >
                               {message.role === "user" ? (
                                 <User
@@ -661,48 +633,42 @@ export function VoiceAgent({
                                     }
                                   />
                                   <Sparkles
-                                    className={`absolute -top-0.5 -right-0.5 text-yellow-400 drop-shadow-sm ${
-                                      compactMode ? "h-2 w-2" : "h-2.5 w-2.5"
-                                    }`}
+                                    className={`absolute -top-0.5 -right-0.5 text-yellow-400 drop-shadow-sm ${compactMode ? "h-2 w-2" : "h-2.5 w-2.5"
+                                      }`}
                                   />
                                 </>
                               )}
                             </div>
                             <div
-                              className={`flex-1 max-w-[85%] ${
-                                message.role === "user"
+                              className={`flex-1 max-w-[85%] ${message.role === "user"
                                   ? "text-right"
                                   : "text-left"
-                              }`}
+                                }`}
                             >
                               <div
-                                className={`inline-block rounded-2xl shadow-lg border transition-all duration-200 hover:shadow-xl ${
-                                  compactMode ? "p-3" : "p-4"
-                                } ${
-                                  message.role === "user"
+                                className={`inline-block rounded-2xl shadow-lg border transition-all duration-200 hover:shadow-xl ${compactMode ? "p-3" : "p-4"
+                                  } ${message.role === "user"
                                     ? "bg-linear-to-r from-blue-500 to-blue-600 text-white rounded-br-md shadow-blue-200/50 border-blue-300/30"
                                     : "bg-linear-to-r from-white to-gray-50 text-gray-800 rounded-bl-md shadow-gray-200/50 border-gray-200/50"
-                                }`}
+                                  }`}
                               >
                                 <p
-                                  className={`leading-relaxed ${
-                                    fontSize === "sm"
+                                  className={`leading-relaxed ${fontSize === "sm"
                                       ? "text-sm"
                                       : fontSize === "lg"
-                                      ? "text-base"
-                                      : "text-sm"
-                                  }`}
+                                        ? "text-base"
+                                        : "text-sm"
+                                    }`}
                                 >
                                   {message.content}
                                 </p>
                               </div>
                               {showTimestamps && (
                                 <div
-                                  className={`flex items-center gap-2 mt-2 ${
-                                    message.role === "user"
+                                  className={`flex items-center gap-2 mt-2 ${message.role === "user"
                                       ? "justify-end"
                                       : "justify-start"
-                                  }`}
+                                    }`}
                                 >
                                   <p className="text-xs font-medium text-gray-600 bg-gray-100/60 px-2 py-0.5 rounded-full">
                                     {message.role === "user"
