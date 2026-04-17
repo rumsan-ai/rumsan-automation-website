@@ -55,7 +55,7 @@ export default function AuthModal({ isLoginModalOpen, setIsLoginModalOpen, setIs
 
   return (
     <Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
-      <DialogContent className="sm:max-w-[425px] p-0 overflow-hidden border-0 shadow-2xl rounded-2xl">
+      <DialogContent className="sm:max-w-106.25 p-0 overflow-hidden border-0 shadow-2xl rounded-2xl">
         <div className="bg-linear-to-br from-blue-700 via-indigo-600 to-violet-800 p-10 text-white relative">
           <div className="absolute top-0 right-0 p-10 opacity-10 blur-2xl">
             <Zap className="w-48 h-48 fill-white" />
@@ -67,7 +67,7 @@ export default function AuthModal({ isLoginModalOpen, setIsLoginModalOpen, setIs
               </div>
               Login / Register
             </DialogTitle>
-            <DialogDescription className="text-white/80 mt-4 text-base font-medium leading-relaxed max-w-[280px]">
+            <DialogDescription className="text-white/80 mt-4 text-base font-medium leading-relaxed max-w-70">
               Authenticate your session to access the VoxFlow API endpoints.
             </DialogDescription>
           </DialogHeader>

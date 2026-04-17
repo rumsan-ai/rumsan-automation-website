@@ -14,7 +14,8 @@ export const URLS = {
   SICK_LEAVE: baseURL + "/webhook/sick-leave",
   RETELL_TOKEN: "/api/create-call",
   VOX_FLOW: voxBaseURL,
-
+  AI_QUIZ: aiQuizURL,
+  AI_QUIZ_API_KEY: process.env.NEXT_PUBLIC_AI_QUIZ_API_KEY,
 };
 
 export const PAGES = {
@@ -22,7 +23,6 @@ export const PAGES = {
   DISCORD_URL: discordURL,
   TELEGRAM_URL: telegramURL,
   COMMUNITY_TOOL: communityToolURL,
-  AI_QUIZ: aiQuizURL,
   SQL_QUIZ: sqlQuizURL,
 };
 export const RETELL_CONFIG = {

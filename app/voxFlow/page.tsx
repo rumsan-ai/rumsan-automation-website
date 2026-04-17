@@ -91,7 +91,7 @@ export default function VoxFlowPage() {
 
         <Tabs defaultValue="transcribe" className="w-full max-h-[calc(100vh-160px)] flex flex-col shadow-xl bg-white/95 backdrop-blur-xl rounded-2xl overflow-hidden border border-slate-200/60 relative group">
           {/* Decorative Top Accent */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 z-10" />
+          <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-500 via-indigo-500 to-purple-500 z-10" />
 
           <TabsList className="shrink-0 grid w-full grid-cols-3 bg-slate-50/50 p-1 border-b border-slate-100 rounded-none h-12">
             <TabsTrigger

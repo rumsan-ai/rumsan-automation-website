@@ -179,33 +179,33 @@ function HomePage() {
       badge: "HR Automation",
       title: "Employee Leave Management",
       shortDescription:
-          "Boost HR productivity and business agility with AI-driven, automated leave management for all employee leave types.",
+        "Boost HR productivity and business agility with AI-driven, automated leave management for all employee leave types.",
       fullDescription:
-          "Transform your HR operations with a fully automated, AI-powered leave management solution. Effortlessly process and categorize all leave requests (sick, emergency, personal, work-from-home) directly from Gmail. Ensure data accuracy, eliminate manual errors, and gain real-time visibility into workforce availability. The system validates, deduplicates, and syncs structured leave data to Google Sheets, supporting compliance, audit trails, and scalable growth. Empower managers to focus on strategic work, reduce operational costs, and deliver a seamless employee experience.",
+        "Transform your HR operations with a fully automated, AI-powered leave management solution. Effortlessly process and categorize all leave requests (sick, emergency, personal, work-from-home) directly from Gmail. Ensure data accuracy, eliminate manual errors, and gain real-time visibility into workforce availability. The system validates, deduplicates, and syncs structured leave data to Google Sheets, supporting compliance, audit trails, and scalable growth. Empower managers to focus on strategic work, reduce operational costs, and deliver a seamless employee experience.",
       isInternalRoute: true,
       dateCreated: new Date("2026-2-18"),
       problems: [
-          "Manual leave processing wastes valuable HR and management time",
-          "Operational inefficiencies increase payroll and admin costs",
-          "Lack of real-time leave data disrupts resource planning and project delivery",
-          "Manual errors and missing information lead to payroll disputes and compliance risks",
-          "No standardized process for handling multiple leave types (sick, emergency, personal, WFH)",
-          "Difficulty tracking work-from-home deliverables impacts productivity measurement",
-          "Duplicate or inconsistent records undermine data integrity and reporting",
-          "No audit trail or version history for compliance and dispute resolution",
-          "Scalability issues as business and workforce grow",
-          "Limited visibility for leadership to make data-driven decisions",
+        "Manual leave processing wastes valuable HR and management time",
+        "Operational inefficiencies increase payroll and admin costs",
+        "Lack of real-time leave data disrupts resource planning and project delivery",
+        "Manual errors and missing information lead to payroll disputes and compliance risks",
+        "No standardized process for handling multiple leave types (sick, emergency, personal, WFH)",
+        "Difficulty tracking work-from-home deliverables impacts productivity measurement",
+        "Duplicate or inconsistent records undermine data integrity and reporting",
+        "No audit trail or version history for compliance and dispute resolution",
+        "Scalability issues as business and workforce grow",
+        "Limited visibility for leadership to make data-driven decisions",
       ],
       useCases: [
-          "Save HR and management time by automating leave request processing from Gmail",
-          "Reduce payroll and admin costs through error-free, standardized data entry",
-          "Gain instant visibility into employee availability for better project and resource planning",
-          "Ensure compliance and reduce risk with audit trails and versioned leave records",
-          "Support business growth with a scalable, automated leave management system",
-          "Empower leadership with real-time dashboards and actionable workforce insights",
-          "Track work-from-home deliverables for productivity and accountability",
-          "Eliminate duplicate entries and maintain clean, reliable data for payroll and reporting",
-          "Deliver a seamless, transparent leave experience for employees and managers",
+        "Save HR and management time by automating leave request processing from Gmail",
+        "Reduce payroll and admin costs through error-free, standardized data entry",
+        "Gain instant visibility into employee availability for better project and resource planning",
+        "Ensure compliance and reduce risk with audit trails and versioned leave records",
+        "Support business growth with a scalable, automated leave management system",
+        "Empower leadership with real-time dashboards and actionable workforce insights",
+        "Track work-from-home deliverables for productivity and accountability",
+        "Eliminate duplicate entries and maintain clean, reliable data for payroll and reporting",
+        "Deliver a seamless, transparent leave experience for employees and managers",
       ],
     },
     {
@@ -470,8 +470,8 @@ function HomePage() {
         "Transform documents into interactive quizzes effortlessly. Upload content, generate summaries, and automatically create AI-powered quizzes.",
       fullDescription:
         "A FastAPI-based AI quiz platform with full document management. Upload, delete, or link files/drive URLs, then generate quizzes and questions automatically. Built with Redis, PostgreSQL, Qdrant, and Alembic, it delivers fast, scalable, and reliable operations for AI-driven quiz creation and management. Transform documents into interactive quizzes effortlessly, making learning and assessment seamless and multilingual-ready.",
-      workflowUrl: PAGES.AI_QUIZ,
-      isInternalRoute: false,
+      workflowUrl: "/ai-quiz",
+      isInternalRoute: true,
       dateCreated: new Date("2026-3-15"),
       problems: [
         "Manual quiz creation from documents is slow and error-prone",
@@ -549,7 +549,7 @@ function HomePage() {
   ];
 
   // Sort workflows by latest first (most recent dateCreated)
-  const sortedWorkflows = workflows.sort((a, b) => 
+  const sortedWorkflows = workflows.sort((a, b) =>
     new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
   );
 
@@ -665,101 +665,100 @@ function HomePage() {
               {/* Problems & Use Cases for all workflows */}
               {(sortedWorkflows.find((w) => w.id === expandedWorkflow)?.problems
                 ?.length ?? 0) > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-3">
-                    Problems
-                  </h3>
-                  <ul className="list-disc pl-5 space-y-1.5 text-sm text-slate-600">
-                    {sortedWorkflows
-                      .find((w) => w.id === expandedWorkflow)
-                      ?.problems.map((p, idx) => (
-                        <li key={idx}>{p}</li>
-                      ))}
-                  </ul>
-                </div>
-              )}
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-900 mb-3">
+                      Problems
+                    </h3>
+                    <ul className="list-disc pl-5 space-y-1.5 text-sm text-slate-600">
+                      {sortedWorkflows
+                        .find((w) => w.id === expandedWorkflow)
+                        ?.problems.map((p, idx) => (
+                          <li key={idx}>{p}</li>
+                        ))}
+                    </ul>
+                  </div>
+                )}
 
               {(sortedWorkflows.find((w) => w.id === expandedWorkflow)?.useCases
                 ?.length ?? 0) > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-3">
-                    Use Cases
-                  </h3>
-                  <ul className="list-disc pl-5 space-y-1.5 text-sm text-slate-600">
-                    {sortedWorkflows
-                      .find((w) => w.id === expandedWorkflow)
-                      ?.useCases?.map((u, idx) => (
-                        <li key={idx}>{u}</li>
-                      ))}
-                  </ul>
-                </div>
-              )}
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-900 mb-3">
+                      Use Cases
+                    </h3>
+                    <ul className="list-disc pl-5 space-y-1.5 text-sm text-slate-600">
+                      {sortedWorkflows
+                        .find((w) => w.id === expandedWorkflow)
+                        ?.useCases?.map((u, idx) => (
+                          <li key={idx}>{u}</li>
+                        ))}
+                    </ul>
+                  </div>
+                )}
 
               {/* Key Steps */}
               {(sortedWorkflows.find((w) => w.id === expandedWorkflow)?.steps
                 ?.length ?? 0) > 0 && (
-                <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">
-                    User Manual Steps
-                  </h3>
-                  <div className="grid gap-3 sm:grid-cols-1 lg:grid-cols-2">
-                    {sortedWorkflows
-                      .find((w) => w.id === expandedWorkflow)
-                      ?.steps?.map((step, idx) => {
-                        const StepIcon = step.icon;
-                        return (
-                          <div
-                            key={idx}
-                            className="flex gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50"
-                          >
-                            <div className="h-8 w-8 rounded-lg bg-blue-600/10 border border-blue-500/20 flex items-center justify-center shrink-0">
-                              <StepIcon className="h-4 w-4 text-blue-600" />
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">
+                      User Manual Steps
+                    </h3>
+                    <div className="grid gap-3 sm:grid-cols-1 lg:grid-cols-2">
+                      {sortedWorkflows
+                        .find((w) => w.id === expandedWorkflow)
+                        ?.steps?.map((step, idx) => {
+                          const StepIcon = step.icon;
+                          return (
+                            <div
+                              key={idx}
+                              className="flex gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50"
+                            >
+                              <div className="h-8 w-8 rounded-lg bg-blue-600/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                                <StepIcon className="h-4 w-4 text-blue-600" />
+                              </div>
+                              <div>
+                                <p className="font-semibold text-slate-900 text-sm">{`${idx + 1
+                                  }. ${step.title}`}</p>
+                                <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">
+                                  {step.description}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="font-semibold text-slate-900 text-sm">{`${
-                                idx + 1
-                              }. ${step.title}`}</p>
-                              <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">
-                                {step.description}
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {/* Launch Button */}
               {sortedWorkflows.find((w) => w.id === expandedWorkflow)
                 ?.workflowUrl && expandedWorkflow !== "gmail-application" && (
-                <Button
-                  size="lg"
-                  className="w-full h-12 sm:h-14 lg:h-16 text-base sm:text-lg lg:text-xl font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-all duration-200"
-                  asChild
-                >
-                  <a
-                    href={
-                      sortedWorkflows.find((w) => w.id === expandedWorkflow)
-                        ?.workflowUrl
-                    }
-                    target={
-                      sortedWorkflows.find((w) => w.id === expandedWorkflow)
-                        ?.isInternalRoute
-                        ? "_self"
-                        : "_blank"
-                    }
-                    rel={
-                      sortedWorkflows.find((w) => w.id === expandedWorkflow)
-                        ?.isInternalRoute
-                        ? undefined
-                        : "noopener noreferrer"
-                    }
+                  <Button
+                    size="lg"
+                    className="w-full h-12 sm:h-14 lg:h-16 text-base sm:text-lg lg:text-xl font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-all duration-200"
+                    asChild
                   >
-                    Launch Live Portal
-                  </a>
-                </Button>
-              )}
+                    <a
+                      href={
+                        sortedWorkflows.find((w) => w.id === expandedWorkflow)
+                          ?.workflowUrl
+                      }
+                      target={
+                        sortedWorkflows.find((w) => w.id === expandedWorkflow)
+                          ?.isInternalRoute
+                          ? "_self"
+                          : "_blank"
+                      }
+                      rel={
+                        sortedWorkflows.find((w) => w.id === expandedWorkflow)
+                          ?.isInternalRoute
+                          ? undefined
+                          : "noopener noreferrer"
+                      }
+                    >
+                      Launch Live Portal
+                    </a>
+                  </Button>
+                )}
             </CardContent>
           </Card>
         </div>
