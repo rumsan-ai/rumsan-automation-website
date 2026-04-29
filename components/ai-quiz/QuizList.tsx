@@ -6,10 +6,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, ListChecks, Loader2, Calendar, FileText, Eye, X, ChevronLeft } from 'lucide-react'
+import { Plus, ListChecks, Loader2, Calendar, FileText, Eye, X, ChevronLeft, Link2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
-import { aiQuizAPI } from '@/lib/aiQuizApi'
+import { aiQuizAPI } from "@/lib/api/ai-quiz";
 
 interface QuizListProps {
     onSelectQuiz: (quiz: any) => void
@@ -20,80 +21,54 @@ interface QuizListProps {
 
 export function QuizList({ onSelectQuiz, showCreateFormOnly = false, showQuizListOnly = false, onQuizCreated }: QuizListProps) {
     const { data: quizzes = [], isLoading: quizzesLoading } = useQuizzes()
-    const { data: documents = [] } = useDocuments()
     const queryClient = useQueryClient()
-    
-    const [docId, setDocId] = useState('')
+
+    const [inputUrl, setInputUrl] = useState('')
     const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(['Easy'])
-    const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<string[]>(['mcq'])
+    const [selectedQuestionTypes] = useState<string[]>(['mcq'])
     const [isGenerating, setIsGenerating] = useState(false)
     const [selectedQuizForAdd, setSelectedQuizForAdd] = useState<any | null>(null)
 
-    const { mutate: createQuizMutation, isPending: creating } = useMutation({
-        mutationFn: (data: { title: string; document_id: string; question_ids: number[] }) => 
-            aiQuizAPI.createQuiz(data),
-        onSuccess: (data, variables) => {
-            queryClient.invalidateQueries({ queryKey: ['quizzes'] })
-            toast.success(`Quiz "${variables.title}" created with ${variables.question_ids.length} questions!`)
-            setDocId('')
-            // Redirect to Manage Quizzes tab
-            onQuizCreated?.()
-        },
-        onError: (error: any) => {
-            console.error('Quiz creation failed:', error)
-            toast.error(`Failed to create quiz: ${error.message || 'Unknown error'}`)
-        }
-    })
+    const toggleDifficulty = (difficulty: string) => {
+        setSelectedDifficulties(prev =>
+            prev.includes(difficulty)
+                ? prev.filter(d => d !== difficulty)
+                : [...prev, difficulty]
+        )
+    }
 
     const handleGenerateQuestions = async () => {
-        if (!docId) {
-            toast.error('Please select a document')
+        if (!inputUrl) {
+            toast.error('Please enter a URL')
             return
         }
         if (selectedDifficulties.length === 0) {
             toast.error('Please select at least one difficulty level')
             return
         }
-        if (selectedQuestionTypes.length === 0) {
-            toast.error('Please select at least one question type')
-            return
-        }
 
         setIsGenerating(true)
         try {
-            await aiQuizAPI.generateQuestions({
+            const response = await aiQuizAPI.generateQuestions({
+                url: inputUrl,
                 difficulties: selectedDifficulties,
-                document_id: docId,
                 question_types: selectedQuestionTypes
             })
-            
-            // Fetch the generated questions
-            const response = await aiQuizAPI.getQuestions(undefined, { 
-                documentId: docId,
-                page: 1,
-                limit: 20
-            })
-            
-            // Handle different response formats
-            const questions = Array.isArray(response) ? response : (response as any).questions || (response as any).data || []
-            
-            if (questions.length === 0) {
-                toast.error('No questions were generated')
-                return
+
+            queryClient.invalidateQueries({ queryKey: ['quizzes'] })
+            toast.success(`Quiz created successfully!`)
+            setInputUrl('')
+
+            // Fetch newly created quiz to select it
+            const newQuizzesResp = await aiQuizAPI.getQuizzes()
+            const newQuizzes = Array.isArray(newQuizzesResp) ? newQuizzesResp : (newQuizzesResp as any).quizzes || []
+            const newQuiz = newQuizzes.find((q: any) => q.id === response.quiz_id)
+
+            if (newQuiz) {
+                onSelectQuiz(newQuiz)
+            } else {
+                onQuizCreated?.()
             }
-            
-            // Find the selected document to get its filename/title
-            const selectedDocument = documents.find((doc: any) => doc.document_id === docId)
-            const autoTitle = selectedDocument?.title || selectedDocument?.filename || 'Untitled Quiz'
-            
-            // Auto-create quiz with document filename as title
-            const questionIds = questions.map((q: any) => q.id)
-            createQuizMutation({
-                title: autoTitle,
-                document_id: docId,
-                question_ids: questionIds
-            })
-            
         } catch (error: any) {
             console.error('Question generation failed:', error)
             toast.error(`Generation failed: ${error.message || 'Unknown error'}`)
@@ -115,12 +90,12 @@ export function QuizList({ onSelectQuiz, showCreateFormOnly = false, showQuizLis
 
         setIsGenerating(true)
         try {
-            await aiQuizAPI.generateQuestions({
+            await aiQuizAPI.generateQuestionsAI({
                 difficulties: selectedDifficulties,
                 document_id: selectedQuizForAdd.document_id,
                 question_types: selectedQuestionTypes
             })
-            
+
             queryClient.invalidateQueries({ queryKey: ['questions'] })
             toast.success('Questions generated successfully!')
             setSelectedQuizForAdd(null)
@@ -136,21 +111,7 @@ export function QuizList({ onSelectQuiz, showCreateFormOnly = false, showQuizLis
         setSelectedQuizForAdd(quiz)
     }
 
-    const toggleDifficulty = (difficulty: string) => {
-        setSelectedDifficulties(prev =>
-            prev.includes(difficulty)
-                ? prev.filter(d => d !== difficulty)
-                : [...prev, difficulty]
-        )
-    }
 
-    const toggleQuestionType = (type: string) => {
-        setSelectedQuestionTypes(prev =>
-            prev.includes(type)
-                ? prev.filter(t => t !== type)
-                : [...prev, type]
-        )
-    }
 
     return (
         <div className="space-y-10">
@@ -158,116 +119,81 @@ export function QuizList({ onSelectQuiz, showCreateFormOnly = false, showQuizLis
             {!selectedQuizForAdd && !showQuizListOnly && (
                 <Card className="border-none shadow-premium bg-white/40 backdrop-blur-xl ring-1 ring-black/5 overflow-hidden rounded-2xl">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-3xl rounded-full -mr-20 -mt-20 pointer-events-none" />
-                    <CardHeader className="relative pb-2">
-                        <CardTitle className="text-xl font-bold flex items-center gap-3">
-                            <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                    <CardHeader className="relative pb-4 border-b border-slate-100/50 mb-4">
+                        <CardTitle className="text-xl sm:text-2xl font-black flex items-center gap-3 text-slate-900">
+                            <div className="p-2 rounded-xl bg-blue-600 shadow-lg shadow-blue-500/20 text-white">
                                 <Plus className="w-5 h-5" />
                             </div>
                             Create New Quiz
                         </CardTitle>
-                        <p className="text-xs text-slate-500 mt-1 font-medium">
-                            Quiz will be automatically created with the selected document 
+                        <p className="text-xs sm:text-sm text-slate-500 mt-2 font-medium leading-relaxed">
+                            Provide a URL to automatically generate an interactive AI quiz. Generation might take a few moments depending on the selected difficulty levels.
                         </p>
                     </CardHeader>
-                    <CardContent className="relative pt-0">
-                        <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="space-y-1.5">
-                                    <label className="text-xs font-semibold text-slate-600">Difficulty Levels</label>
-                                    <div className="flex gap-1.5">
-                                        {['Easy', 'Medium', 'Hard'].map((difficulty) => {
-                                            const isSelected = selectedDifficulties.includes(difficulty);
-                                            return (
-                                                <button
-                                                    key={difficulty}
-                                                    type="button"
-                                                    onClick={() => toggleDifficulty(difficulty)}
-                                                    className={`flex-1 px-2 py-1 rounded text-xs font-semibold transition-all ${
-                                                        isSelected 
-                                                            ? 'bg-slate-900 text-white' 
-                                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    <CardContent className="relative pt-2">
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-slate-700">Difficulty Levels</label>
+                                <div className="flex gap-2 p-1.5 bg-slate-100/80 rounded-xl shadow-inner">
+                                    {['Easy', 'Medium', 'Hard'].map((difficulty) => {
+                                        const isSelected = selectedDifficulties.includes(difficulty);
+                                        return (
+                                            <button
+                                                key={difficulty}
+                                                type="button"
+                                                onClick={() => toggleDifficulty(difficulty)}
+                                                className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${isSelected
+                                                    ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5'
+                                                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
                                                     }`}
-                                                >
-                                                    {difficulty}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                                <div className="space-y-1.5">
-                                    <label className="text-xs font-semibold text-slate-600">Question Types</label>
-                                    <div className="flex gap-1.5">
-                                        {[
-                                            { value: 'mcq', label: 'MCQ' },
-                                            { value: 'faq', label: 'FAQ' }
-                                        ].map((type) => {
-                                            const isSelected = selectedQuestionTypes.includes(type.value);
-                                            return (
-                                                <button
-                                                    key={type.value}
-                                                    type="button"
-                                                    onClick={() => toggleQuestionType(type.value)}
-                                                    className={`flex-1 px-2 py-1 rounded text-xs font-semibold transition-all ${
-                                                        isSelected 
-                                                            ? 'bg-slate-900 text-white' 
-                                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                                                    }`}
-                                                >
-                                                    {type.label}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
+                                            >
+                                                {difficulty}
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             </div>
 
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-600">Source Document</label>
-                                <Select 
-                                    value={docId} 
-                                    onValueChange={setDocId}
-                                    disabled={isGenerating || creating}
-                                >
-                                    <SelectTrigger className="bg-white border-none shadow-soft focus:ring-primary h-10 rounded-lg text-sm">
-                                        <SelectValue placeholder="Which document?" />
-                                    </SelectTrigger>
-                                    <SelectContent className="rounded-xl border-none shadow-xl">
-                                        {documents.length === 0 ? (
-                                            <div className="p-4 text-center text-sm text-slate-500">
-                                                No documents yet.
-                                            </div>
-                                        ) : (
-                                            documents.map((doc: any) => (
-                                                <SelectItem 
-                                                    key={doc.document_id} 
-                                                    value={doc.document_id}
-                                                    className="focus:bg-primary/5 rounded-lg py-2"
-                                                >
-                                                    <div className="flex items-center gap-2 text-sm">
-                                                        <FileText className="w-3.5 h-3.5 text-slate-400" />
-                                                        {doc.title || 'Untitled'}
-                                                    </div>
-                                                </SelectItem>
-                                            ))
-                                        )}
-                                    </SelectContent>
-                                </Select>
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center px-1">
+                                    <label className="text-sm font-bold text-slate-700">Add PDF Link</label>
+                                    <button
+                                        type="button"
+                                        onClick={() => setInputUrl('https://rumsan.nyc3.cdn.digitaloceanspaces.com/rumsan-group/rahat-whitepaper.pdf')}
+                                        className="text-[10px] font-bold text-blue-600 hover:text-blue-700 hover:underline transition-all uppercase tracking-wider"
+                                    >
+                                        Try Sample URL
+                                    </button>
+                                </div>
+                                <div className={`relative group flex items-center bg-white border-2 transition-all duration-300 rounded-xl overflow-hidden focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 shadow-sm ${inputUrl ? 'border-blue-400' : 'border-slate-200'}`}>
+                                    <div className="pl-4 pr-3 flex items-center justify-center text-slate-400">
+                                        <Link2 className={`w-5 h-5 transition-colors ${inputUrl ? 'text-blue-500' : 'group-focus-within:text-blue-500'}`} />
+                                    </div>
+                                    <Input
+                                        type="url"
+                                        placeholder="https://example.com/article..."
+                                        value={inputUrl}
+                                        onChange={(e) => setInputUrl(e.target.value)}
+                                        disabled={isGenerating}
+                                        className="flex-1 bg-transparent border-none shadow-none focus-visible:ring-0 px-0 py-4 h-auto text-base font-semibold placeholder:text-slate-300 text-slate-900"
+                                    />
+                                </div>
                             </div>
 
-                            <Button 
+                            <Button
                                 type="button"
                                 onClick={handleGenerateQuestions}
-                                disabled={isGenerating || creating || !docId || selectedDifficulties.length === 0 || selectedQuestionTypes.length === 0}
-                                className="w-full h-10 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold"
+                                disabled={isGenerating || !inputUrl || selectedDifficulties.length === 0}
+                                className="w-full h-14 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-base font-bold shadow-xl shadow-blue-500/30 transition-all hover:-translate-y-1 hover:shadow-blue-500/40 disabled:opacity-50 disabled:hover:translate-y-0"
                             >
-                                {isGenerating || creating ? (
+                                {isGenerating ? (
                                     <>
-                                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                                        {isGenerating ? 'Generating Questions...' : 'Creating Quiz...'}
+                                        <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                                        Generating Quiz (This may take a moment)...
                                     </>
                                 ) : (
                                     <>
-                                        <ListChecks className="w-4 h-4 mr-2" />
+                                        <ListChecks className="w-5 h-5 mr-2" />
                                         Generate & Create Quiz
                                     </>
                                 )}
@@ -288,7 +214,7 @@ export function QuizList({ onSelectQuiz, showCreateFormOnly = false, showQuizLis
                         <ChevronLeft className="w-4 h-4" />
                         Back to Quiz List
                     </Button>
-                    
+
                     <Card className="border-none shadow-premium bg-white/40 backdrop-blur-xl ring-1 ring-black/5 overflow-hidden rounded-2xl">
                         <CardHeader className="pb-2 pt-3">
                             <CardTitle className="text-sm font-bold text-slate-900">
@@ -296,57 +222,8 @@ export function QuizList({ onSelectQuiz, showCreateFormOnly = false, showQuizLis
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2.5 pt-0 pb-3">
-                            <div className="grid grid-cols-2 gap-2.5">
-                                <div className="space-y-1">
-                                    <label className="text-[11px] font-semibold text-slate-600">Difficulty Levels</label>
-                                    <div className="flex gap-1">
-                                        {['Easy', 'Medium', 'Hard'].map((difficulty) => {
-                                            const isSelected = selectedDifficulties.includes(difficulty);
-                                            return (
-                                                <button
-                                                    key={difficulty}
-                                                    type="button"
-                                                    onClick={() => toggleDifficulty(difficulty)}
-                                                    className={`flex-1 px-1.5 py-0.5 rounded text-[11px] font-semibold transition-all ${
-                                                        isSelected 
-                                                            ? 'bg-slate-900 text-white' 
-                                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                                                    }`}
-                                                >
-                                                    {difficulty}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-[11px] font-semibold text-slate-600">Question Types</label>
-                                    <div className="flex gap-1">
-                                        {[
-                                            { value: 'mcq', label: 'MCQ' },
-                                            { value: 'faq', label: 'FAQ' }
-                                        ].map((type) => {
-                                            const isSelected = selectedQuestionTypes.includes(type.value);
-                                            return (
-                                                <button
-                                                    key={type.value}
-                                                    type="button"
-                                                    onClick={() => toggleQuestionType(type.value)}
-                                                    className={`flex-1 px-1.5 py-0.5 rounded text-[11px] font-semibold transition-all ${
-                                                        isSelected 
-                                                            ? 'bg-slate-900 text-white' 
-                                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                                                    }`}
-                                                >
-                                                    {type.label}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
 
-                            <Button 
+                            <Button
                                 type="button"
                                 onClick={handleGenerateQuestionsForQuiz}
                                 disabled={isGenerating || selectedDifficulties.length === 0 || selectedQuestionTypes.length === 0}
@@ -375,7 +252,7 @@ export function QuizList({ onSelectQuiz, showCreateFormOnly = false, showQuizLis
                             {quizzes.length} Total
                         </div>
                     </div>
-                
+
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {quizzesLoading && quizzes.length === 0 ? (
                             Array.from({ length: 3 }).map((_, i) => (
@@ -388,15 +265,15 @@ export function QuizList({ onSelectQuiz, showCreateFormOnly = false, showQuizLis
                                 </div>
                                 <h4 className="text-lg font-bold text-slate-700">No quizzes available</h4>
                                 <p className="text-sm text-slate-500 max-w-60">
-                                    {showQuizListOnly 
+                                    {showQuizListOnly
                                         ? 'Go to the "Questions" tab to create your first quiz.'
                                         : 'Create your first quiz using the form above to start managing questions.'}
                                 </p>
                             </div>
                         ) : (
                             quizzes.map((quiz: any) => (
-                                <Card 
-                                    key={quiz.id} 
+                                <Card
+                                    key={quiz.id}
                                     className="group border-none shadow-soft hover:shadow-premium bg-white/60 backdrop-blur-xl transition-all duration-300 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:-translate-y-1"
                                 >
                                     <CardHeader className="pb-3">
@@ -421,8 +298,8 @@ export function QuizList({ onSelectQuiz, showCreateFormOnly = false, showQuizLis
                                     </CardHeader>
                                     <CardContent className="pt-2">
                                         <div className="flex gap-2">
-                                            <Button 
-                                                variant="ghost" 
+                                            <Button
+                                                variant="ghost"
                                                 size="sm"
                                                 className="flex-1 rounded-lg h-9 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold"
                                                 onClick={() => onSelectQuiz(quiz)}
@@ -430,8 +307,8 @@ export function QuizList({ onSelectQuiz, showCreateFormOnly = false, showQuizLis
                                                 <Eye className="w-4 h-4 mr-1.5" />
                                                 View
                                             </Button>
-                                            <Button 
-                                                variant="ghost" 
+                                            <Button
+                                                variant="ghost"
                                                 size="sm"
                                                 className="flex-1 rounded-lg h-9 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold"
                                                 onClick={() => handleAddQuestions(quiz)}

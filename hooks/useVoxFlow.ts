@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { voxAPI, ApiParams } from '@/lib/voxFlowApi'
+import { voxAPI, ApiParams } from "@/lib/api/vox-flow";
 
 export function useVoxLogin() {
   return useMutation({

@@ -16,9 +16,9 @@ export default function TTSTab() {
   const [ttsText, setTtsText] = useState('')
   const [ttsLang, setTtsLang] = useState('eng_Latn')
   const [ttsResult, setTtsResult] = useState<any>(null)
- 
+
   const ttsMut = useVoxTTS()
- 
+
   const handleTTS = () => {
     if (!ttsText) return toast({ title: "Please enter text", variant: "destructive" })
     ttsMut.mutate({ text: ttsText, language: ttsLang }, {
@@ -29,9 +29,9 @@ export default function TTSTab() {
       onError: (err: any) => toast({ title: "TTS Failed", description: err.message, variant: "destructive" })
     })
   }
- 
+
   const audioUrl = ttsResult?.url || ttsResult?.audio_url || ttsResult?.file_url || ttsResult?.file;
- 
+
   return (
     <Card className="border-0 shadow-none bg-transparent">
       <CardHeader className="px-0 pt-0 pb-1 flex flex-row items-center justify-between">
@@ -52,7 +52,7 @@ export default function TTSTab() {
             />
           </div>
         </div>
- 
+
         <div className="grid grid-cols-2 gap-2 p-2 bg-indigo-50/20 rounded-xl border border-indigo-100/30">
           <div className="space-y-0.5">
             <Label className="text-[8px] font-bold text-indigo-500 uppercase tracking-widest px-1">Language</Label>
@@ -61,13 +61,13 @@ export default function TTSTab() {
                 <SelectValue placeholder="Language" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="eng_Latn">English</SelectItem>
-                <SelectItem value="nep_Deva">Nepali</SelectItem>
+                <SelectItem value="english">English</SelectItem>
+                <SelectItem value="nepali">Nepali</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
- 
+
         <div className="flex gap-2">
           <Button className="flex-1 h-8 text-[10px] font-bold bg-indigo-600 hover:bg-indigo-700 shadow-sm" onClick={handleTTS} disabled={ttsMut.isPending}>
             <Play className="h-3 w-3 mr-2" />
@@ -94,13 +94,13 @@ export default function TTSTab() {
                 <p className="text-[9px] font-bold text-slate-800 uppercase tracking-tight">Audio Generated</p>
               </div>
             </div>
-            
+
             {ttsResult?.text && (
               <div className="mb-2 px-2 py-1.5 bg-slate-50/50 rounded-lg border border-slate-100 italic text-slate-500 text-[10px] line-clamp-2">
                 "{ttsResult.text}"
               </div>
             )}
- 
+
             <audio key={audioUrl} controls className="w-full h-8 rounded-lg scale-95 origin-left">
               <source src={audioUrl} type="audio/wav" />
             </audio>

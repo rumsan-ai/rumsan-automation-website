@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { aiQuizAPI } from '@/lib/aiQuizApi';
+import { aiQuizAPI } from "@/lib/api/ai-quiz";
 import { toast } from 'sonner';
 
 export const useDocuments = () => {

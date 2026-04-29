@@ -8,43 +8,29 @@ if (!BASE_URL && typeof window !== 'undefined') {
 }
 
 export interface ApiParams {
-    token?: string;
-    isValidated?: 'true' | 'false' | 'all';
     difficulty?: 'easy' | 'medium' | 'hard';
-    questionType?: 'mcq' | 'faq' | 'boolean';
+    questionType?: 'mcq';
     documentId?: string;
     page?: number;
     limit?: number;
 }
 
-function getHeaders(params?: ApiParams, isFormData = false) {
+function getHeaders(isFormData = false) {
     const headers: Record<string, string> = {
         'accept': 'application/json'
     }
     if (!isFormData) headers['Content-Type'] = 'application/json'
-
-    const apiKey = URLS.AI_QUIZ_API_KEY;
-    const finalToken = params?.token || apiKey;
-
-    if (finalToken) {
-        headers['Authorization'] = `Bearer ${finalToken}`;
-    }
-
-    // Add filter headers if provided
-    if (params?.isValidated) headers['IsValidated'] = params.isValidated;
-    if (params?.difficulty) headers['Difficulty'] = params.difficulty;
-    if (params?.questionType) headers['Question-Type'] = params.questionType;
 
     return headers
 }
 
 export const aiQuizAPI = {
     // Document Management
-    uploadDocument: async (formData: FormData, params?: ApiParams): Promise<any> => {
-        const res = await fetch(`${BASE_URL}/upload_document/`, {
+    uploadDocument: async (formData: FormData): Promise<any> => {
+        const res = await fetch(`${BASE_URL}/upload_document`, {
             method: 'POST',
             mode: 'cors',
-            headers: getHeaders(params, true),
+            headers: getHeaders(true),
             body: formData
         })
         if (!res.ok) {
@@ -58,10 +44,10 @@ export const aiQuizAPI = {
         return res.json()
     },
 
-    getDocuments: async (params?: ApiParams): Promise<any[]> => {
-        const res = await fetch(`${BASE_URL}/documents/`, {
+    getDocuments: async (): Promise<any[]> => {
+        const res = await fetch(`${BASE_URL}/documents/public`, {
             mode: 'cors',
-            headers: getHeaders(params)
+            headers: getHeaders()
         })
         if (!res.ok) {
             const errorText = await res.text();
@@ -71,11 +57,11 @@ export const aiQuizAPI = {
     },
 
     // Quiz Management
-    createQuiz: async (data: { title: string; document_id: string; question_ids: number[] }, params?: ApiParams): Promise<any> => {
+    createQuiz: async (data: { title: string; document_id: string; question_ids: number[] }): Promise<any> => {
         const res = await fetch(`${BASE_URL}/quiz/create_quiz`, {
             method: 'POST',
             mode: 'cors',
-            headers: getHeaders(params),
+            headers: getHeaders(),
             body: JSON.stringify(data)
         })
         if (!res.ok) {
@@ -85,11 +71,11 @@ export const aiQuizAPI = {
         return res.json()
     },
 
-    getQuizzes: async (params?: ApiParams): Promise<any[]> => {
+    getQuizzes: async (): Promise<any[]> => {
         const query = 'skip=0&limit=20';
-        const res = await fetch(`${BASE_URL}/quiz/get_quiz?${query}`, {
+        const res = await fetch(`${BASE_URL}/quiz/public?${query}`, {
             mode: 'cors',
-            headers: getHeaders(params)
+            headers: getHeaders()
         })
         if (!res.ok) throw new Error(`Failed to fetch quizzes: ${res.status}`);
         return res.json() as Promise<any[]>
@@ -99,7 +85,7 @@ export const aiQuizAPI = {
     getQuestions: async (quizId?: string, params?: ApiParams): Promise<any[]> => {
         const docId = params?.documentId;
         const page = params?.page || 1;
-        const limit = params?.limit || 20;
+        const limit = params?.limit || 10;
 
         // Build query string matching the curl order exactly
         let queryParts = [];
@@ -110,10 +96,15 @@ export const aiQuizAPI = {
         queryParts.push(`limit=${limit}`);
 
         const queryString = queryParts.join('&');
+        
+        const headers = getHeaders();
+        if (params?.difficulty) {
+            headers['Difficulty'] = params.difficulty;
+        }
 
-        const res = await fetch(`${BASE_URL}/questions/?${queryString}`, {
+        const res = await fetch(`${BASE_URL}/questions/public?${queryString}`, {
             mode: 'cors',
-            headers: getHeaders(params)
+            headers: headers
         })
         if (!res.ok) {
             const errorText = await res.text();
@@ -128,67 +119,67 @@ export const aiQuizAPI = {
         return res.json() as Promise<any[]>
     },
 
-    deleteQuestions: async (questionIds: string[], params?: ApiParams): Promise<any> => {
-        const res = await fetch(`${BASE_URL}/questions/`, {
+    deleteQuestions: async (questionIds: string[]): Promise<any> => {
+        const res = await fetch(`${BASE_URL}/questions`, {
             method: 'DELETE',
             mode: 'cors',
-            headers: getHeaders(params),
+            headers: getHeaders(),
             body: JSON.stringify({ question_ids: questionIds })
         })
         if (!res.ok) throw new Error(`Failed to delete questions: ${res.status}`);
         return res.json()
     },
 
-    updateQuestion: async (questionId: string, data: any, params?: ApiParams): Promise<any> => {
-        const res = await fetch(`${BASE_URL}/questions/update/${questionId}/`, {
+    updateQuestion: async (questionId: string, data: any): Promise<any> => {
+        const res = await fetch(`${BASE_URL}/questions/update/${questionId}`, {
             method: 'PATCH',
             mode: 'cors',
-            headers: getHeaders(params),
+            headers: getHeaders(),
             body: JSON.stringify(data)
         })
         if (!res.ok) throw new Error(`Failed to update question: ${res.status}`);
         return res.json()
     },
 
-    validateQuestions: async (data: any, params?: ApiParams): Promise<any> => {
-        const res = await fetch(`${BASE_URL}/questions/validate/`, {
+    validateQuestions: async (data: any): Promise<any> => {
+        const res = await fetch(`${BASE_URL}/questions/validate`, {
             method: 'PATCH',
             mode: 'cors',
-            headers: getHeaders(params),
+            headers: getHeaders(),
             body: JSON.stringify(data)
         })
         if (!res.ok) throw new Error(`Failed to validate questions: ${res.status}`);
         return res.json()
     },
 
-    createQuestionManual: async (data: any, params?: ApiParams): Promise<any> => {
+    createQuestionManual: async (data: any): Promise<any> => {
         const { quiz_id, ...payload } = data; // Strip quiz_id from API call if present
-        const res = await fetch(`${BASE_URL}/questions/generate-questions/manual/`, {
+        const res = await fetch(`${BASE_URL}/questions/generate-questions/manual`, {
             method: 'POST',
             mode: 'cors',
-            headers: getHeaders(params),
+            headers: getHeaders(),
             body: JSON.stringify(payload)
         })
         if (!res.ok) throw new Error(`Failed to create question: ${res.status}`);
         return res.json()
     },
 
-    generateQuestionsAI: async (data: any, params?: ApiParams): Promise<any> => {
-        const res = await fetch(`${BASE_URL}/questions/generate-questions/ai/`, {
+    generateQuestionsAI: async (data: any): Promise<any> => {
+        const res = await fetch(`${BASE_URL}/questions/generate-questions/ai`, {
             method: 'POST',
             mode: 'cors',
-            headers: getHeaders(params),
+            headers: getHeaders(),
             body: JSON.stringify(data)
         })
         if (!res.ok) throw new Error(`Failed to generate questions: ${res.status}`);
         return res.json()
     },
 
-    generateQuestions: async (data: any, params?: ApiParams): Promise<any> => {
+    generateQuestions: async (data: any): Promise<any> => {
         const res = await fetch(`${BASE_URL}/questions/generate-questions`, {
             method: 'POST',
             mode: 'cors',
-            headers: getHeaders(params),
+            headers: getHeaders(),
             body: JSON.stringify(data)
         })
         if (!res.ok) {

@@ -18,7 +18,6 @@ export default function TranslateTab() {
   const [translateSource, setTranslateSource] = useState('auto')
   const [translateTarget, setTranslateTarget] = useState('eng_Latn')
   const [translationResult, setTranslationResult] = useState<any>(null)
-  const [showRaw, setShowRaw] = useState(false)
 
   const translateMut = useVoxTranslate()
 
@@ -100,22 +99,6 @@ export default function TranslateTab() {
                </div>
             </div>
 
-            <div className="space-y-1">
-              <button 
-                onClick={() => setShowRaw(!showRaw)}
-                className="text-[8px] font-bold text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-1 px-1"
-              >
-                {showRaw ? 'Hide' : 'Show'} Raw JSON
-              </button>
-              
-              {showRaw && (
-                <Textarea
-                  className="min-h-20 font-mono text-[9px] bg-slate-900 text-teal-400 p-2 rounded-lg border-0 shadow-inner"
-                  readOnly
-                  value={JSON.stringify(translationResult, null, 2)}
-                />
-              )}
-            </div>
           </div>
         )}
       </CardContent>

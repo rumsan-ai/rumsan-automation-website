@@ -5,7 +5,6 @@ const discordURL = process.env.NEXT_PUBLIC_DISCORD_URL;
 const telegramURL = process.env.NEXT_PUBLIC_TELEGRAM_URL;
 const communityToolURL = process.env.NEXT_PUBLIC_COMMUNITY_TOOL;
 const aiQuizURL = process.env.NEXT_PUBLIC_AI_QUIZ;
-const sqlQuizURL = process.env.NEXT_PUBLIC_SQL_QUIZ;
 
 
 export const URLS = {
@@ -15,15 +14,13 @@ export const URLS = {
   RETELL_TOKEN: "/api/create-call",
   VOX_FLOW: voxBaseURL,
   AI_QUIZ: aiQuizURL,
-  AI_QUIZ_API_KEY: process.env.NEXT_PUBLIC_AI_QUIZ_API_KEY,
+  COMMUNITY_TOOL: communityToolURL,
 };
 
 export const PAGES = {
   FACEBOOK_URL: facebookURL,
   DISCORD_URL: discordURL,
   TELEGRAM_URL: telegramURL,
-  COMMUNITY_TOOL: communityToolURL,
-  SQL_QUIZ: sqlQuizURL,
 };
 export const RETELL_CONFIG = {
   SAMPLE_RATE: 24000,
