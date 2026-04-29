@@ -3,22 +3,22 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     // Get optional metadata from request body
-    const body = await request.json().catch(() => ({})) as { 
-      metadata?: Record<string, any>; 
-      dynamicVariables?: Record<string, any> 
+    const body = await request.json().catch(() => ({})) as {
+      metadata?: Record<string, any>;
+      dynamicVariables?: Record<string, any>
     };
     const { metadata = {}, dynamicVariables = {} } = body;
-    
+
     const apiKey = process.env.RETELL_API_KEY;
     const agentId = process.env.AGENT_ID;
-    
+
     if (!apiKey) {
       return NextResponse.json(
         { error: "Retell API key not configured" },
         { status: 500 }
       );
     }
-    
+
     if (!agentId) {
       return NextResponse.json(
         { error: "Agent ID not configured" },
@@ -55,10 +55,10 @@ export async function POST(request: Request) {
       const errorText = await response.text();
       console.error("Retell API error:", response.status, errorText);
       return NextResponse.json(
-        { 
+        {
           error: "Failed to create web call",
           details: errorText,
-          status: response.status 
+          status: response.status
         },
         { status: response.status }
       );
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-    
+
     // Return token to frontend
     return NextResponse.json({
       access_token: webCallResponse.access_token,
@@ -87,18 +87,18 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Error generating Retell token:", error);
-    
+
     // Handle specific errors
     if (error instanceof Error) {
       return NextResponse.json(
-        { 
+        {
           error: "Failed to generate access token",
           details: error.message,
         },
         { status: 500 }
       );
     }
-    
+
     return NextResponse.json(
       { error: "Failed to generate access token" },
       { status: 500 }
