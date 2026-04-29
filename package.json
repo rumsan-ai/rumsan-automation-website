@@ -3,15 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "pnpm exec next build",
     "dev": "next dev",
     "lint": "eslint .",
     "start": "next start",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "cf-build": "opennextjs-cloudflare build",
-    "cf-deploy": "opennextjs-cloudflare deploy"
+    "cf-deploy": "wrangler deploy"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -71,6 +70,7 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.16.3",
     "@tailwindcss/postcss": "^4.1.9",
     "@types/node": "^22",
     "@types/react": "^19",
