@@ -99,7 +99,7 @@ export const WorkflowModal = ({
               Product Demo
             </h3>
             <div className="relative aspect-video w-full rounded-xl sm:rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 shadow-xl group">
-               {expandedWorkflowId === "ai-quiz" ? (
+              {expandedWorkflowId === "ai-quiz" ? (
                 <iframe
                   className="w-full h-full"
                   src="https://drive.google.com/file/d/1K6R2zoAn7jT4iv-KZYKefg4r8emUdlTE/preview"
@@ -124,6 +124,26 @@ export const WorkflowModal = ({
                   className="w-full h-full"
                   src="https://drive.google.com/file/d/1_QLTHsJA9VFsT9h5HDGCJVaHEBVLzvtt/preview"
                   title="CV Evaluation Demo Video"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                ></iframe>
+              ) : expandedWorkflowId === "vox-flow" ? (
+                <iframe
+                  className="w-full h-full"
+                  src="https://drive.google.com/file/d/16uCAlIBkNMd_gHdUv443rUOcmvt482WP/preview"
+                  title="Voxflow Demo Video"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                ></iframe>
+              ) : expandedWorkflowId === "community-tool" ? (
+                <iframe
+                  className="w-full h-full"
+                  src="https://drive.google.com/file/d/1__jnuM-C3DT6KaTeVmtODl5q_-9f2DLC/preview"
+                  title="Community Tool Demo Video"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   referrerPolicy="strict-origin-when-cross-origin"
@@ -164,8 +184,9 @@ export const WorkflowModal = ({
                         <StepIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-600" />
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900 text-xs sm:text-sm">{`${idx + 1
-                          }. ${step.title}`}</p>
+                        <p className="font-bold text-slate-900 text-xs sm:text-sm">{`${
+                          idx + 1
+                        }. ${step.title}`}</p>
                         <p className="text-slate-600 text-[10px] sm:text-xs mt-0.5 leading-relaxed">
                           {step.description}
                         </p>
