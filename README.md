@@ -30,23 +30,8 @@ A Next.js automation portal providing intelligent workflow solutions powered by 
    pnpm dev
    ```
 
-## Environment Variables
-
-Configure your `.env` file with:
-
-```env
-N8N_WEBHOOK_BASE_URL=https://your-n8n-instance.com
-```
-
 ## Tech Stack
 
 - Next.js 14 + TypeScript
 - Tailwind CSS + Shadcn/UI
 - N8N webhook integration
-
-## Pages
-
-- `/` - Main dashboard
-- `/cvEvaluation` - CV evaluation portal
-- `/sickLeave` - Leave management
-- `/invoiceValidation` - Invoice processing
