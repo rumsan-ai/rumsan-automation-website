@@ -37,23 +37,23 @@ export function StepProduct({
     webhookProducts.length > 0 ? webhookProducts : AVAILABLE_PRODUCTS;
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2 mb-1">
+    <div className="space-y-1">
+      <div className="flex items-center gap-2 mb-0.5">
         <Package className="w-4 h-4 text-blue-600" />
-        <h3 className="text-base font-semibold">Select Products & Support</h3>
+        <h3 className="text-sm font-semibold">Select Products & Support</h3>
       </div>
-      <div className="space-y-2">
-        <div className="space-y-1.5">
-          <Label className="text-sm">Select Affected Products *</Label>
-          <div className="grid grid-cols-2 gap-1.5 p-2 border rounded-lg max-h-36 overflow-y-auto">
+      <div className="space-y-1">
+        <div className="space-y-1">
+          <Label className="text-xs font-medium">Select Affected Products *</Label>
+          <div className="grid grid-cols-2 gap-1.5 p-1.5 border rounded-lg max-h-36 overflow-y-auto">
             {productsToShow.map((product) => (
-              <div key={product} className="flex items-center space-x-2">
+              <div key={product} className="flex items-center space-x-1.5">
                 <Checkbox
                   id={product}
                   checked={selectedProducts.includes(product)}
                   onCheckedChange={() => onProductToggle(product)}
                 />
-                <Label htmlFor={product} className="text-sm font-normal">
+                <Label htmlFor={product} className="text-xs font-normal">
                   {product}
                 </Label>
               </div>
@@ -66,11 +66,11 @@ export function StepProduct({
           )}
         </div>
 
-        <div className="space-y-1.5">
-          <Label className="text-sm">Type of support needed *</Label>
-          <div className="grid grid-cols-1 gap-1 p-2 border rounded-lg">
+        <div className="space-y-1">
+          <Label className="text-xs font-medium">Type of support needed *</Label>
+          <div className="grid grid-cols-1 gap-1 p-1.5 border rounded-lg">
             {SUPPORT_TYPES.map((supportType) => (
-              <div key={supportType} className="flex items-center space-x-2">
+              <div key={supportType} className="flex items-center space-x-1.5">
                 <Checkbox
                   id={supportType}
                   checked={selectedSupportType === supportType}
@@ -78,7 +78,7 @@ export function StepProduct({
                     if (checked) onSupportTypeChange(supportType);
                   }}
                 />
-                <Label htmlFor={supportType} className="text-sm font-normal">
+                <Label htmlFor={supportType} className="text-xs font-normal">
                   {supportType}
                 </Label>
               </div>
@@ -91,7 +91,7 @@ export function StepProduct({
       </div>
 
       {selectedProducts.length > 0 && selectedSupportType && (
-        <Button onClick={onContinue} className="w-full" disabled={isSubmitting}>
+        <Button onClick={onContinue} className="w-full" size="sm" disabled={isSubmitting}>
           {isSubmitting ? "Processing..." : "Continue"}
         </Button>
       )}
@@ -125,22 +125,22 @@ export function StepIssue({
     (issueType === "Other" && issueDescription.length > 0);
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2 mb-2">
+    <div className="space-y-1">
+      <div className="flex items-center gap-2 mb-0.5">
         <AlertCircle className="w-4 h-4 text-blue-600" />
-        <h3 className="text-base font-semibold">Describe Issue</h3>
+        <h3 className="text-sm font-semibold">Describe Issue</h3>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="issueType" className="text-sm">
+      <div className="space-y-1">
+        <Label htmlFor="issueType" className="text-xs font-medium">
           Select Issue Type *
         </Label>
         <Select value={issueType} onValueChange={onIssueTypeChange}>
-          <SelectTrigger className="w-fit max-w-md text-base">
+          <SelectTrigger className="w-fit max-w-md text-sm">
             <SelectValue placeholder="Choose the type of issue..." />
           </SelectTrigger>
           <SelectContent className="z-50 bg-blue-50 border-2 border-blue-400 shadow-2xl">
             {issueOptions.map((option) => (
-              <SelectItem key={option} value={option} className="text-base">
+              <SelectItem key={option} value={option} className="text-sm">
                 {option}
               </SelectItem>
             ))}
@@ -148,8 +148,8 @@ export function StepIssue({
         </Select>
       </div>
       {issueType === "Other" && (
-        <div className="space-y-2">
-          <Label htmlFor="issue" className="text-sm">
+        <div className="space-y-1">
+          <Label htmlFor="issue" className="text-xs font-medium">
             Describe the problem you&apos;re experiencing *
           </Label>
           <Textarea
@@ -157,13 +157,13 @@ export function StepIssue({
             placeholder="Please provide detailed information about the issue..."
             value={issueDescription}
             onChange={(e) => onIssueDescriptionChange(e.target.value)}
-            rows={4}
-            className="text-base"
+            rows={3}
+            className="text-xs"
           />
         </div>
       )}
       {canContinue && (
-        <Button onClick={onContinue} className="w-full" disabled={isSubmitting}>
+        <Button onClick={onContinue} className="w-full" size="sm" disabled={isSubmitting}>
           {isSubmitting ? "Processing..." : "Continue"}
         </Button>
       )}

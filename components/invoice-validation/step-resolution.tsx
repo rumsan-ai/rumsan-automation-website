@@ -43,15 +43,15 @@ export function StepResolution({
     notificationEmail.length > 0;
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2 mb-1">
+    <div className="space-y-1">
+      <div className="flex items-center gap-2 mb-0.5">
         <Mail className="w-4 h-4 text-blue-600" />
-        <h3 className="text-base font-semibold">Resolution</h3>
+        <h3 className="text-sm font-semibold">Resolution</h3>
       </div>
 
-      <div className="space-y-2">
-        <div className="space-y-1.5">
-          <Label>What resolution would you like? *</Label>
+      <div className="space-y-1">
+        <div className="space-y-1">
+          <Label className="text-xs font-medium">What resolution would you like? *</Label>
           <Select
             value={selectedResolution}
             onValueChange={(value) => {
@@ -80,7 +80,8 @@ export function StepResolution({
               placeholder="Please describe your desired resolution..."
               value={desiredResolution}
               onChange={(e) => onDesiredResolutionChange(e.target.value)}
-              className="min-h-16 text-sm p-2"
+              className="min-h-12 text-xs p-2"
+              rows={2}
             />
           )}
         </div>
@@ -100,7 +101,7 @@ export function StepResolution({
         </div>
 
         {canSubmit && (
-          <Button onClick={onSubmit} className="w-full">
+          <Button onClick={onSubmit} className="w-full" size="sm">
             {isSubmitting ? "Submitting Claim..." : "Submit Claim"}
           </Button>
         )}
@@ -118,21 +119,21 @@ interface SubmissionSuccessProps {
 
 export function SubmissionSuccess({ notificationEmail, redirectCountdown }: SubmissionSuccessProps) {
   return (
-    <div className="text-center space-y-4">
-      <div className="space-y-3">
-        <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
-        <h3 className="text-xl font-bold text-green-700">Claim Submitted Successfully!</h3>
-        <div className="space-y-1.5">
-          <p className="text-slate-600">Your claim has been submitted and is being processed.</p>
-          <p className="text-sm text-slate-600">
+    <div className="text-center space-y-2">
+      <div className="space-y-1.5">
+        <CheckCircle className="w-10 h-10 text-green-500 mx-auto" />
+        <h3 className="text-base font-bold text-green-700">Claim Submitted Successfully!</h3>
+        <div className="space-y-0.5">
+          <p className="text-xs text-slate-600">Your claim has been submitted and is being processed.</p>
+          <p className="text-[10px] text-slate-600">
             You&apos;ll receive updates via email at{" "}
             <span className="font-medium text-blue-600">{notificationEmail}</span>
           </p>
         </div>
       </div>
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-        <div className="flex items-center justify-center gap-2 text-blue-700 text-sm">
-          <Loader2 className="w-4 h-4 animate-spin" />
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-1.5">
+        <div className="flex items-center justify-center gap-1.5 text-blue-700 text-[10px]">
+          <Loader2 className="w-3 h-3 animate-spin" />
           <span className="font-medium">Returning to home in {redirectCountdown} seconds...</span>
         </div>
       </div>

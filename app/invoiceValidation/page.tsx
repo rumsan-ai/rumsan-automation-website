@@ -25,25 +25,28 @@ export default function HomePage() {
       </nav>
 
       {/* Page Content */}
-      <section className="mx-auto max-w-480px-6 sm:px-6 lg:px-6 mt-4">
-        <div className="flex items-start gap-6">
-          {/* Back Arrow */}
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors group mt-2"
-          >
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            <span className="text-sm font-medium">Back to Home</span>
-          </Link>
-          
-          {/* Content Container */}
-          <div className="flex-1 max-w-480px-6 rounded-2xl bg-white border border-slate-200 p-6 sm:p-8 lg:p-8 shadow-lg">
-            <h4 className="text-3xl sm:text-4xl font-bold mb-4 text-balance">
-              Claims Portal
-            </h4>
-            <ClaimsPortal />
-          </div>
+      <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-6 mt-6">
+        {/* Back Arrow */}
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors group mb-4"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          <span className="text-sm">Back to Home</span>
+        </Link>
+        
+        {/* Page Title */}
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-semibold text-slate-900">
+            Invoice Validation Portal
+          </h1>
+          <p className="text-sm text-slate-500 mt-2">
+            Submit and track your product warranty claims or report issues in a few simple steps
+          </p>
         </div>
+        
+        {/* Claims Portal Component */}
+        <ClaimsPortal />
       </section>
     </main>
   );
