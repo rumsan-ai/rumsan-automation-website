@@ -1,4 +1,4 @@
-import CVUploader from "@/components/cv-uploader";
+import CVUploader from "@/components/cv-evaluation";
 import { Zap, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 

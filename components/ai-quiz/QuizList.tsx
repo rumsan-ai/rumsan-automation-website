@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useQuizzes, useDocuments } from '@/hooks/useAiQuiz'
+import { useQuizzes, useDocuments } from '@/hooks/use-ai-quiz'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'

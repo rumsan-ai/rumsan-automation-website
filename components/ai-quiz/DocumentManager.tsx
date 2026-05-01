@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useRef } from 'react'
-import { useDocuments, useUploadDocument } from '@/hooks/useAiQuiz'
+import { useDocuments, useUploadDocument } from '@/hooks/use-ai-quiz'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
