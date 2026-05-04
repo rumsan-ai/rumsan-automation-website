@@ -1,4 +1,4 @@
-import { VoiceAgent } from "@/components/open-source-voice-agent";
+import { VoiceAgent } from "@/components/open-source-agent";
 import { Zap } from "lucide-react";
 
 export default function VoiceAgentPage() {

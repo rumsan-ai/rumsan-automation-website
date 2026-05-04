@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { FileUploader } from "@/components/community-tool/file-uploader";
 import { ClassifiedHeaders } from "@/components/community-tool/classified-headers";
 import { ResultsTable } from "@/components/community-tool/results-table";
-import { useCommunityTool } from "@/components/community-tool/use-community-tool";
+import { useCommunityTool } from "@/hooks/use-community-tool";
 
 export default function CommunityToolPage() {
     const {

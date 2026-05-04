@@ -1,7 +1,7 @@
 import { useState, useRef, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import { communityAPI } from "@/lib/api/community";
-import { CommunityResult, PaginationInfo } from "./schema";
+import { CommunityResult, PaginationInfo } from "@/components/community-tool/schema";
 
 export const useCommunityTool = () => {
     const [file, setFile] = useState<File | null>(null);

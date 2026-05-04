@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
-import { useVoxTranscribeShort, useVoxTranscribeLong, useVoxTranscribeOnly } from '@/hooks/useVoxFlow'
+import { useVoxTranscribeShort, useVoxTranscribeLong, useVoxTranscribeOnly } from '@/hooks/use-vox-flow'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'

@@ -31,7 +31,7 @@ import {
     Type,
     Brain
 } from 'lucide-react'
-import { useAddManualQuestion } from '@/hooks/useAiQuiz'
+import { useAddManualQuestion } from '@/hooks/use-ai-quiz'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 

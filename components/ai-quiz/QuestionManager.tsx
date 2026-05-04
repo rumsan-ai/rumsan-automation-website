@@ -5,7 +5,7 @@ import {
     useQuestions,
     useUpdateQuestion,
     useDeleteQuestion
-} from '@/hooks/useAiQuiz'
+} from '@/hooks/use-ai-quiz'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
