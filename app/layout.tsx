@@ -1,17 +1,17 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Montserrat, Open_Sans, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "@/components/ui/toaster"
 import { Providers } from "./providers"
 import "./globals.css"
 
-const geist = Geist({ subsets: ["latin"] })
-const geistMono = Geist_Mono({ subsets: ["latin"] })
-
+const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat" })
+const openSans = Open_Sans({ subsets: ["latin"], variable: "--font-open-sans" })
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" })
 export const metadata: Metadata = {
-  title: "N8N Automation Products",
-  description: "Enterprise workflows built with n8n",
+  title: "Rumsan Automation",
+  description: "Enterprise automation workflows",
   generator: "v0.app",
 }
 
@@ -30,7 +30,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/images/favicon.png" />
       </head>
-      <body className={`${geist.className} antialiased`}>
+      <body className={`${openSans.className} ${montserrat.variable} ${openSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           {children}
         </Providers>

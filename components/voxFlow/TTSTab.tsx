@@ -14,7 +14,7 @@ export default function TTSTab() {
   const { toast } = useToast()
 
   const [ttsText, setTtsText] = useState('')
-  const [ttsLang, setTtsLang] = useState('eng_Latn')
+  const [ttsLang, setTtsLang] = useState('english')
   const [ttsResult, setTtsResult] = useState<any>(null)
 
   const ttsMut = useVoxTTS()
@@ -28,6 +28,26 @@ export default function TTSTab() {
       },
       onError: (err: any) => toast({ title: "TTS Failed", description: err.message, variant: "destructive" })
     })
+  }
+
+  const handleDownload = async () => {
+    if (!audioUrl) return
+    
+    try {
+      const response = await fetch(audioUrl)
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'tts.wav'
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
+      toast({ title: "Audio downloaded!" })
+    } catch (error) {
+      toast({ title: "Download failed", variant: "destructive" })
+    }
   }
 
   const audioUrl = ttsResult?.url || ttsResult?.audio_url || ttsResult?.file_url || ttsResult?.file;
@@ -73,14 +93,14 @@ export default function TTSTab() {
             <Play className="h-3 w-3 mr-2" />
             {ttsMut.isPending ? 'Generating...' : 'Convert to Audio'}
           </Button>
-          <Button variant="outline" className="h-8 px-3 text-[10px] font-bold border-indigo-100" disabled={!audioUrl} asChild={!!audioUrl}>
-            {audioUrl ? (
-              <a href={audioUrl} download="output.wav">
-                <Download className="h-3 w-3" />
-              </a>
-            ) : (
-              <Download className="h-3 w-3" />
-            )}
+          <Button 
+            variant="outline" 
+            className="h-8 px-3 text-[10px] font-bold border-indigo-200 bg-linear-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 hover:border-indigo-300 text-indigo-700 hover:text-indigo-800 transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:border-slate-200 disabled:text-slate-400"
+            onClick={handleDownload}
+            disabled={!audioUrl}
+          >
+            <Download className="h-3 w-3 mr-1.5" />
+            <span>Save</span>
           </Button>
         </div>
 

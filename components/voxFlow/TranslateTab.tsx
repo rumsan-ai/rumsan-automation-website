@@ -16,7 +16,7 @@ export default function TranslateTab() {
 
   const [translateText, setTranslateText] = useState('')
   const [translateSource, setTranslateSource] = useState('auto')
-  const [translateTarget, setTranslateTarget] = useState('eng_Latn')
+  const [translateTarget, setTranslateTarget] = useState('english')
   const [translationResult, setTranslationResult] = useState<any>(null)
 
   const translateMut = useVoxTranslate()
@@ -62,8 +62,8 @@ export default function TranslateTab() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="auto">Automatic</SelectItem>
-                <SelectItem value="eng_Latn">English</SelectItem>
-                <SelectItem value="nep_Deva">Nepali</SelectItem>
+                <SelectItem value="english">English</SelectItem>
+                <SelectItem value="nepali">Nepali</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -75,8 +75,8 @@ export default function TranslateTab() {
                 <SelectValue placeholder="Target" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="eng_Latn">English</SelectItem>
-                <SelectItem value="nep_Deva">Nepali</SelectItem>
+                <SelectItem value="english">English</SelectItem>
+                <SelectItem value="nepali">Nepali</SelectItem>
               </SelectContent>
             </Select>
           </div>
