@@ -27,27 +27,28 @@ export const WorkflowCard = ({ workflow, onExpand }: WorkflowCardProps) => (
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
           )}
           <span
-            className={`relative inline-flex rounded-full h-2 w-2 ${
-              workflow.status === "operational"
+            className={`relative inline-flex rounded-full h-2 w-2 ${workflow.status === "operational"
                 ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"
                 : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]"
-            }`}
+              }`}
           ></span>
         </div>
         {workflow.badge}
       </span>
     </div>
 
-    <CardHeader className="p-5 sm:p-6 relative z-10 grow">
-      <div className="mb-4 transform group-hover:scale-110 transition-transform duration-500">
+    <CardHeader className="p-5 sm:p-6 relative z-10 flex flex-col justify-start">
+      <div className="mb-4 sm:mb-5 transform group-hover:scale-110 transition-transform duration-500 self-start">
         <WorkflowIcon icon={workflow.icon} colorClass={workflow.iconColor} />
       </div>
-      <CardTitle className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight mb-2 sm:mb-3 group-hover:text-blue-900 transition-colors">
-        {workflow.title}
-      </CardTitle>
-      <CardDescription className="text-xs sm:text-sm text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors">
-        {workflow.shortDescription}
-      </CardDescription>
+      <div className="flex flex-col gap-2 sm:gap-3">
+        <CardTitle className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight group-hover:text-blue-900 transition-colors min-h-12.5 sm:min-h-15">
+          {workflow.title}
+        </CardTitle>
+        <CardDescription className="text-xs sm:text-sm text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors min-h-[3.65rem] sm:min-h-17 text-justify hyphens-auto">
+          {workflow.shortDescription}
+        </CardDescription>
+      </div>
     </CardHeader>
 
     <CardContent className="px-5 sm:px-6 pb-5 sm:pb-6 relative z-10 mt-auto">

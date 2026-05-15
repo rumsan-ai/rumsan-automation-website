@@ -142,7 +142,7 @@ export const useCommunityTool = () => {
             }, 500);
 
             const data = await communityAPI.uploadCSV(file, {
-                standard_name: standardName,
+                standard_name: "",
                 page: page,
                 page_size: pageSize
             });

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { useVoxTranscribeShort, useVoxTranscribeLong, useVoxTranscribeOnly } from '@/hooks/use-vox-flow'
@@ -22,10 +22,24 @@ export default function TranscribeTab() {
   const [transcribeLang, setTranscribeLang] = useState('auto')
   const [transcriptionResult, setTranscriptionResult] = useState<any>(null)
   const [copied, setCopied] = useState(false)
+  const [audioPreviewUrl, setAudioPreviewUrl] = useState<string | null>(null)
 
   const transcribeShortMut = useVoxTranscribeShort()
   const transcribeLongMut = useVoxTranscribeLong()
   const transcribeOnlyMut = useVoxTranscribeOnly()
+
+  // Create and cleanup preview URL for uploaded files
+  useEffect(() => {
+    if (fileSelection?.type === 'file' && fileSelection.file) {
+      const url = URL.createObjectURL(fileSelection.file)
+      setAudioPreviewUrl(url)
+      return () => URL.revokeObjectURL(url) // Cleanup
+    } else if (fileSelection?.type === 'sample') {
+      setAudioPreviewUrl('/sample_audio.wav')
+    } else {
+      setAudioPreviewUrl(null)
+    }
+  }, [fileSelection])
 
   const handleTranscribe = () => {
 
@@ -75,36 +89,40 @@ export default function TranscribeTab() {
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="px-0">
-        <div className={`transition-all duration-500 ${transcriptionResult ? 'grid md:grid-cols-2 gap-6 items-start' : 'max-w-md mx-auto py-4'}`}>
-          {/* Left Column: Controls */}
-          <div className="space-y-4">
-            {fileSelection?.type === 'sample' && (
-              <div className="p-2 bg-linear-to-r from-indigo-50/50 to-blue-50/50 rounded-xl border border-indigo-100 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-500">
-                <div className="h-4 w-4 rounded-full bg-indigo-600 flex items-center justify-center shrink-0 shadow-sm">
-                  <Zap className="h-2.5 w-2.5 text-white" />
-                </div>
-                <p className="text-[10px] text-indigo-900 leading-tight font-medium">
-                  Using <span className="font-bold underline decoration-indigo-200 underline-offset-1">sample audio</span>. Remove for custom upload.
-                </p>
-              </div>
-            )}
-
-            <div className={`group relative border-2 border-dashed transition-all duration-300 rounded-xl p-3 text-center overflow-hidden ${fileSelection ? 'bg-indigo-50/10 border-indigo-400/20' : 'border-slate-200 hover:border-blue-400 bg-slate-50/50'}`}>
+      <CardContent className="px-0 space-y-2.5">
+        <div className="space-y-1.5">
+          <div className={`group relative border-2 border-dashed transition-all duration-300 rounded-2xl p-3 overflow-hidden ${fileSelection ? 'bg-blue-50/10 border-blue-100' : 'border-slate-100 bg-slate-50/50'}`}>
+            <Label className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block px-1 text-left">Audio Source</Label>
+            <div className="min-h-20 w-full flex flex-col justify-center bg-white rounded-xl shadow-xs border border-slate-100 p-2 hover:border-blue-400/30 transition-all">
               {fileSelection ? (
-                <div className="animate-in fade-in zoom-in-95 duration-300 flex flex-col items-center">
-                  <div className="h-8 w-8 bg-white rounded-lg flex items-center justify-center mb-1.5 border border-indigo-100 shadow-sm">
-                    <FileAudio className={`h-4 w-4 ${fileSelection.type === 'sample' ? 'text-indigo-600' : 'text-blue-600'}`} />
-                  </div>
-                  <div className="flex flex-col items-center gap-0.5 mb-2">
-                    <h4 className="text-[10px] font-bold text-slate-800 tracking-tight truncate max-w-40">{fileSelection.name}</h4>
-                  </div>
-                  <button onClick={() => setFileSelection(null)} className="text-[8px] font-bold text-slate-500 hover:text-red-500 transition-colors bg-white border border-slate-200 px-2 py-1 rounded-lg">
-                    Change Audio
-                  </button>
+                <div className="animate-in fade-in zoom-in-95 duration-300 flex flex-col gap-2">
+                    <div className="flex items-center justify-between px-1 gap-2">
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <div className="h-7 w-7 bg-blue-50/50 rounded-lg flex items-center justify-center border border-blue-100 shadow-sm shrink-0">
+                          <FileAudio className={`h-3.5 w-3.5 ${fileSelection.type === 'sample' ? 'text-indigo-600' : 'text-blue-600'}`} />
+                        </div>
+                        <div className="flex flex-col text-left flex-1 min-w-0">
+                          <h4 className="text-[10px] font-bold text-slate-800 tracking-tight truncate w-full">{fileSelection.name}</h4>
+                          {fileSelection.type === 'sample' && <span className="text-[8px] text-indigo-600 font-semibold flex items-center gap-1 truncate w-full"><Zap className="h-2 w-2 shrink-0"/> Sample Audio</span>}
+                        </div>
+                      </div>
+                      <button onClick={() => setFileSelection(null)} className="text-[8px] font-bold text-slate-500 hover:text-red-500 transition-colors bg-white border border-slate-200 px-2 py-1 rounded-md shadow-xs shrink-0">
+                        Remove
+                      </button>
+                    </div>
+                  {audioPreviewUrl && (
+                    <audio 
+                      key={audioPreviewUrl}
+                      controls 
+                      className="w-full h-7 rounded-md"
+                      style={{ filter: 'hue-rotate(200deg) saturate(0.8)' }}
+                    >
+                      <source src={audioPreviewUrl} type={fileSelection.file?.type || 'audio/wav'} />
+                    </audio>
+                  )}
                 </div>
               ) : (
-                <div className="flex flex-col items-center py-1">
+                <div className="flex flex-col items-center justify-center h-full py-1">
                   <Upload className="h-4 w-4 text-slate-300 mb-1" />
                   <h4 className="text-[10px] font-bold text-slate-700 mb-2">Upload Audio</h4>
                   <label className="cursor-pointer inline-flex items-center justify-center rounded-lg text-[9px] font-bold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 h-7 px-4 shadow-xs">
@@ -114,12 +132,14 @@ export default function TranscribeTab() {
                 </div>
               )}
             </div>
+          </div>
+        </div>
 
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1">
-                <Label className="text-[8px] font-bold text-gray-500 uppercase tracking-widest ml-1">Type</Label>
+            <div className="grid grid-cols-2 gap-2 p-2 bg-blue-50/20 rounded-xl border border-blue-100/30">
+              <div className="space-y-0.5">
+                <Label className="text-[8px] font-bold text-blue-600 uppercase tracking-widest px-1">Type</Label>
                 <Select value={transcribeType} onValueChange={setTranscribeType}>
-                  <SelectTrigger className="bg-white h-7 text-[10px] rounded-lg">
+                  <SelectTrigger className="bg-white h-7 text-[10px] border-blue-100/50">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -129,24 +149,24 @@ export default function TranscribeTab() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1">
-                <Label className="text-[8px] font-bold text-gray-500 uppercase tracking-widest ml-1">Language</Label>
+              <div className="space-y-0.5">
+                <Label className="text-[8px] font-bold text-blue-600 uppercase tracking-widest px-1">Language</Label>
                 <Select value={transcribeLang} onValueChange={setTranscribeLang}>
-                  <SelectTrigger className="bg-white h-7 text-[10px] rounded-lg">
+                  <SelectTrigger className="bg-white h-7 text-[10px] border-blue-100/50">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="auto">Auto</SelectItem>
-                    <SelectItem value="eng_Latn">English</SelectItem>
-                    <SelectItem value="nep_Deva">Nepali</SelectItem>
-                    <SelectItem value="hin_Deva">Hindi</SelectItem>
+                    <SelectItem value="english">English</SelectItem>
+                    <SelectItem value="nepali">Nepali</SelectItem>
+                    <SelectItem value="hindi">Hindi</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
             <Button
-              className="w-full h-9 text-[11px] font-bold bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/20 rounded-xl transition-all active:scale-[0.98]"
+              className="w-full h-8 text-[10px] font-bold bg-blue-600 hover:bg-blue-700 shadow-sm"
               onClick={handleTranscribe}
               disabled={transcribeShortMut.isPending || transcribeLongMut.isPending || transcribeOnlyMut.isPending}
             >
@@ -157,11 +177,8 @@ export default function TranscribeTab() {
                 </span>
               ) : 'Run Transcription'}
             </Button>
-          </div>
-
-          {/* Right Column: Results */}
           {transcriptionResult && (
-            <div className="space-y-3 animate-in fade-in slide-in-from-right-4 duration-500">
+            <div className="pt-1.5 space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-400">
               <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm relative group/result overflow-hidden">
                 <div className="flex items-center justify-between mb-2">
                   <Badge className="bg-blue-50 text-blue-600 border-blue-100 text-[8px] font-bold px-1.5 py-0">
@@ -202,10 +219,8 @@ export default function TranscribeTab() {
                   )}
                 </div>
               </div>
-
             </div>
           )}
-        </div>
       </CardContent>
     </Card>
   )
