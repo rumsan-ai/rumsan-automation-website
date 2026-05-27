@@ -29,13 +29,14 @@ export function QuizList({ onSelectQuiz, showCreateFormOnly = false, showQuizLis
     const [isGenerating, setIsGenerating] = useState(false)
     const [selectedQuizForAdd, setSelectedQuizForAdd] = useState<any | null>(null)
 
+    // Only one difficulty can be selected at a time
     const toggleDifficulty = (difficulty: string) => {
         setSelectedDifficulties(prev =>
             prev.includes(difficulty)
-                ? prev.filter(d => d !== difficulty)
-                : [...prev, difficulty]
-        )
-    }
+                ? []
+                : [difficulty]
+        );
+    } 
 
     const handleGenerateQuestions = async () => {
         if (!inputUrl) {
