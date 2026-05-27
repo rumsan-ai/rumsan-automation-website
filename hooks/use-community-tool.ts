@@ -1,5 +1,6 @@
 import { useState, useRef, useMemo, useEffect } from "react";
 import { toast } from "sonner";
+import * as XLSX from "xlsx";
 import { communityAPI } from "@/lib/api/community";
 import { CommunityResult, PaginationInfo } from "@/components/community-tool/schema";
 
@@ -39,35 +40,72 @@ export const useCommunityTool = () => {
                 setFile(sampleFile);
                 setStandardName('community_tool');
                 setIsPreloaded(true);
-                parseCSV(sampleFile);
+                parseFile(sampleFile);
             })
             .catch(() => { /* silently ignore if not found */ });
     }, []);
 
-    const parseCSV = (file: File) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const text = e.target?.result as string;
-            if (!text) return;
+    const parseFile = (file: File) => {
+        const normalizedName = file.name.toLowerCase();
+        if (normalizedName.endsWith('.csv')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target?.result as string;
+                if (!text) return;
 
-            const lines = text.split(/\r?\n/);
-            if (lines.length === 0) return;
+                const lines = text.split(/\r?\n/);
+                if (lines.length === 0) return;
 
-            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-            const dataRows = lines.slice(1)
-                .filter(line => line.trim() !== '')
-                .map(line => {
-                    const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
-                    const row: any = {};
-                    headers.forEach((h, i) => {
-                        row[h] = values[i] || "";
+                const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+                const dataRows = lines.slice(1)
+                    .filter(line => line.trim() !== '')
+                    .map(line => {
+                        const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+                        const row: any = {};
+                        headers.forEach((h, i) => {
+                            row[h] = values[i] || "";
+                        });
+                        return row;
                     });
-                    return row;
-                });
 
-            setLocalData(dataRows);
-        };
-        reader.readAsText(file);
+                setLocalData(dataRows);
+            };
+            reader.readAsText(file);
+            return;
+        }
+
+        if (normalizedName.endsWith('.xls') || normalizedName.endsWith('.xlsx')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = e.target?.result;
+                if (!data) return;
+
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const sheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+                setLocalData(jsonData as any[]);
+            };
+            reader.readAsArrayBuffer(file);
+            return;
+        }
+
+        setLocalData([]);
+    };
+
+    const convertExcelToCSVFile = async (file: File) => {
+        const normalizedName = file.name.toLowerCase();
+        if (!normalizedName.endsWith('.xls') && !normalizedName.endsWith('.xlsx')) {
+            return file;
+        }
+
+        const arrayBuffer = await file.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[firstSheetName];
+        const csv = XLSX.utils.sheet_to_csv(sheet, { FS: ',' });
+        const csvFileName = `${file.name.replace(/\.(xls|xlsx)$/i, '')}.csv`;
+        return new File([csv], csvFileName, { type: 'text/csv' });
     };
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -79,32 +117,49 @@ export const useCommunityTool = () => {
         setIsDragging(false);
     };
 
+    const isSupportedFile = (file: File) => {
+        const normalizedName = file.name.toLowerCase();
+        return (
+            file.type === "text/csv" ||
+            normalizedName.endsWith('.csv') ||
+            normalizedName.endsWith('.xls') ||
+            normalizedName.endsWith('.xlsx')
+        );
+    };
+
+    const isCsvFile = (file: File) => {
+        const normalizedName = file.name.toLowerCase();
+        return file.type === "text/csv" || normalizedName.endsWith('.csv');
+    };
+
     const handleDrop = (e: React.DragEvent) => {
         e.preventDefault();
         setIsDragging(false);
         const droppedFile = e.dataTransfer.files[0];
-        if (droppedFile && (droppedFile.type === "text/csv" || droppedFile.name.endsWith('.csv'))) {
+        if (droppedFile && isSupportedFile(droppedFile)) {
             setFile(droppedFile);
             const cleanName = droppedFile.name.split('.')[0].toLowerCase().replace(/[^a-z0-9]/g, '_');
             setStandardName(cleanName);
-            parseCSV(droppedFile);
+            parseFile(droppedFile);
             toast.success("File added: " + droppedFile.name);
             setLastResult(null);
             setCurrentPage(1);
         } else {
-            toast.error("Please upload a valid CSV file");
+            toast.error("Please upload a valid CSV or Excel file");
         }
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
-        if (selectedFile) {
+        if (selectedFile && isSupportedFile(selectedFile)) {
             setFile(selectedFile);
             const cleanName = selectedFile.name.split('.')[0].toLowerCase().replace(/[^a-z0-9]/g, '_');
             setStandardName(cleanName);
-            parseCSV(selectedFile);
+            parseFile(selectedFile);
             setLastResult(null);
             setCurrentPage(1);
+        } else if (selectedFile) {
+            toast.error("Please upload a valid CSV or Excel file");
         }
     };
 
@@ -141,7 +196,8 @@ export const useCommunityTool = () => {
                 setUploadProgress(prev => (prev < 90 ? prev + 10 : prev));
             }, 500);
 
-            const data = await communityAPI.uploadCSV(file, {
+            const uploadFile = await convertExcelToCSVFile(file);
+            const data = await communityAPI.uploadCSV(uploadFile, {
                 standard_name: "",
                 page: page,
                 page_size: pageSize

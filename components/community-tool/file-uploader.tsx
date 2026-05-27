@@ -48,7 +48,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     if (isMaximized || isHeadersMaximized) return null;
 
     return (
-        <div className="w-full space-y-6 flex-shrink-0 animate-in fade-in duration-500">
+        <div className="w-full space-y-6 shrink-0 animate-in fade-in duration-500">
             <Card className="border-none shadow-premium bg-white/70 backdrop-blur-xl dark:bg-slate-900/70 overflow-hidden">
                 <CardHeader className="border-b border-slate-100 dark:border-slate-800 py-3">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -94,7 +94,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                         >
                             <input
                                 type="file"
-                                accept=".csv"
+                                accept=".csv,.xls,.xlsx"
                                 className="hidden"
                                 ref={fileInputRef}
                                 onChange={handleFileChange}
@@ -108,7 +108,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                                         </div>
                                         <div className="flex flex-col text-left min-w-0">
                                             <div className="flex items-center gap-2">
-                                                <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-white truncate max-w-[150px] sm:max-w-[200px]">{file.name}</p>
+                                                <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-white truncate max-w-37.5 sm:max-w-50">{file.name}</p>
                                                 {isPreloaded && (
                                                     <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800/50 shrink-0">
                                                         SAMPLE
@@ -123,7 +123,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                                             variant="secondary"
                                             size="sm"
                                             onClick={(e) => { e.stopPropagation(); setIsPreviewOpen(!isPreviewOpen); }}
-                                            className={`relative !z-30 h-8 px-4 rounded-lg pointer-events-auto transition-colors flex items-center gap-2 shadow-sm ${isPreviewOpen ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600'}`}
+                                            className={`relative z-30! h-8 px-4 rounded-lg pointer-events-auto transition-colors flex items-center gap-2 shadow-sm ${isPreviewOpen ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600'}`}
                                         >
                                             <span className="text-[10px] font-extrabold uppercase tracking-wider">View Data</span>
                                         </Button>
@@ -144,7 +144,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                                         <Upload className="w-5 h-5 text-slate-400 group-hover:text-primary" />
                                     </div>
                                     <div className="text-left">
-                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-200">Drop CSV file here</p>
+                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-200">Drop CSV or Excel file here</p>
                                         <p className="text-[10px] text-muted-foreground">Click to browse local files</p>
                                     </div>
                                 </div>
@@ -163,7 +163,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                                 disabled={!file || uploading}
                                 onClick={() => handleUpload(1)}
                             >
-                                <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-1000" />
+                                <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/10 to-white/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
                                 {uploading ? (
                                     <span className="flex items-center gap-2">
                                         <Loader2 className="h-4 w-4 animate-spin" />
