@@ -14,7 +14,6 @@ import {
   GraduationCap,
   Briefcase,
   Calendar,
-  FileText,
 } from "lucide-react";
 import { MarkdownRenderer } from "./markdown-renderer";
 import type { ParsedData } from "./types";
@@ -199,19 +198,11 @@ export function CVResult({ data }: Props) {
         )}
 
         {data.evaluation && (
-          <Card className="border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="border-b border-slate-200 bg-linear-to-r from-slate-50 to-blue-50 py-2">
-              <CardTitle className="flex items-center gap-2 text-slate-800 text-sm">
-                <div className="p-1.5 bg-slate-100 rounded-lg">
-                  <FileText className="w-4 h-4 text-slate-600" />
-                </div>
-                Evaluation Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-1 pt-1 pb-0">
+          <Card className="mb-6 gap-0 py-0 border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+            <CardContent className="space-y-3 pt-3 pb-8">
               {data.evaluation.decision && (
                 <div
-                  className={`p-2 rounded-lg border-2 shadow-sm ${
+                  className={`p-3 rounded-lg border-2 shadow-sm ${
                     data.evaluation.decision === "Accept"
                       ? "bg-linear-to-r from-green-50 to-emerald-50 border-green-300"
                       : "bg-linear-to-r from-red-50 to-rose-50 border-red-300"
@@ -234,7 +225,7 @@ export function CVResult({ data }: Props) {
                         data.evaluation.decision === "Accept" ? "text-green-900" : "text-red-900"
                       }`}
                     >
-                      Decision: {data.evaluation.decision || "Pending"}
+                      Final Decision: {data.evaluation.decision || "Pending"}
                     </h3>
                   </div>
                 </div>

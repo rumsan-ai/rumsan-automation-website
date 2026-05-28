@@ -70,6 +70,19 @@ export const JOB_POSITIONS = [
       "Strong scripting skills (Bash, Python, or similar).",
     ],
   },
+  {
+    id: "junior-business-analyst",
+    title: "Junior Business Analyst",
+    requirements: [
+      "Bachelor's degree in Business, IT, or related field.",
+      "Basic understanding of requirement gathering and business processes.",
+      "Understanding of SDLC (Software Development Life Cycle).",
+      "Strong analytical and communication skills.",
+      "Proficiency in Excel or Google Sheets.",
+      "Basic knowledge of SQL.",
+      "Familiarity with Agile/Scrum.",
+    ],
+  },
 ];
 
 export const JOB_REQUIREMENTS = JOB_POSITIONS[0];

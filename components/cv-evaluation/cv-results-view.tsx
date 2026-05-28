@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { FileText, Download, ArrowLeft } from "lucide-react";
@@ -16,8 +16,8 @@ interface Props {
 export function CVResultsView({ files, onBack }: Props) {
   return (
     <div className="w-full">
-      <Card className="bg-white border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300 max-h-[calc(100vh-200px)] overflow-hidden flex flex-col">
-        <CardHeader className="bg-linear-to-r from-purple-600 via-purple-700 to-indigo-600 py-4 shrink-0">
+      <div className="h-[calc(100vh-220px)] min-h-105 overflow-y-auto">
+        <CardHeader className="bg-linear-to-r from-purple-600 via-purple-700 to-indigo-600 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button
@@ -54,12 +54,15 @@ export function CVResultsView({ files, onBack }: Props) {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-3 overflow-y-auto flex-1">
+        <CardContent className="p-4 pb-12">
           <div className="space-y-2">
             {files.map((file) => (
               <div key={file.id}>
                 <div className="mb-1 p-1.5 bg-purple-50 rounded-lg border border-purple-200">
-                  <h4 className="font-semibold text-purple-900 text-sm">📄 {file.file.name}</h4>
+                  <h4 className="flex items-center gap-2 font-semibold text-purple-900 text-sm">
+                    <FileText className="w-4 h-4" />
+                    Evaluation Summary
+                  </h4>
                 </div>
                 {file.parsedData ? (
                   <CVResult data={file.parsedData} />
@@ -73,7 +76,7 @@ export function CVResultsView({ files, onBack }: Props) {
             ))}
           </div>
         </CardContent>
-      </Card>
+      </div>
     </div>
   );
 }

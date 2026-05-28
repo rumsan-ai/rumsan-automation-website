@@ -51,7 +51,7 @@ export function MarkdownRenderer({ content }: Props) {
       } else if (line.trim() === "") {
         if (inList) {
           elements.push(
-            <ul key={`list-${index}`} className="list-disc list-inside ml-4 mb-4 text-slate-800 space-y-1">
+            <ul key={`list-${index}`} className="list-disc list-outside pl-6 mb-4 text-slate-800 space-y-1.5 leading-relaxed">
               {currentList.map((item, i) => (
                 <li key={i} className="text-slate-800">{item}</li>
               ))}
@@ -63,7 +63,7 @@ export function MarkdownRenderer({ content }: Props) {
       } else if (line.trim()) {
         if (inList) {
           elements.push(
-            <ul key={`list-${index}`} className="list-disc list-inside ml-4 mb-4 text-slate-800 space-y-1">
+            <ul key={`list-${index}`} className="list-disc list-outside pl-6 mb-4 text-slate-800 space-y-1.5 leading-relaxed">
               {currentList.map((item, i) => (
                 <li key={i} className="text-slate-800">{item}</li>
               ))}
@@ -75,7 +75,7 @@ export function MarkdownRenderer({ content }: Props) {
         elements.push(
           <p
             key={index}
-            className="text-slate-800 leading-relaxed mb-3"
+            className="text-slate-800 leading-relaxed mb-3 text-justify"
             dangerouslySetInnerHTML={{ __html: lineElement }}
           />
         );
@@ -84,7 +84,7 @@ export function MarkdownRenderer({ content }: Props) {
 
     if (inList && currentList.length > 0) {
       elements.push(
-        <ul key="final-list" className="list-disc list-inside ml-4 mb-4 text-slate-800 space-y-1">
+        <ul key="final-list" className="list-disc list-outside pl-6 mb-4 text-slate-800 space-y-1.5 leading-relaxed">
           {currentList.map((item, i) => (
             <li key={i} className="text-slate-800">{item}</li>
           ))}
@@ -96,7 +96,7 @@ export function MarkdownRenderer({ content }: Props) {
   };
 
   return (
-    <div className="prose prose-sm max-w-none bg-white rounded-lg p-3 border border-slate-200">
+    <div className="prose prose-sm max-w-none bg-white rounded-lg p-4 border border-slate-200 text-slate-800">
       {renderMarkdown(content)}
     </div>
   );

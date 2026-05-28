@@ -112,11 +112,68 @@ export const downloadPreviewData = (uploadedFile: UploadedFile) => {
 
     const formatMarkdownForPDF = (content: string): string => {
       return content
-        .replace(/\*\*(.*?)\*\*/g, "$1")
         .replace(/^#{1,6}\s+/gm, "")
         .replace(/^[-*+]\s+/gm, "• ")
         .replace(/\n{3,}/g, "\n\n")
         .trim();
+    };
+
+    const addMarkdownText = (text: string, fontSize = 10) => {
+      const segments = text.split(/(\*\*.*?\*\*)/g).filter(Boolean).map((segment) => {
+        const isBold = segment.startsWith("**") && segment.endsWith("**");
+        return {
+          text: isBold ? segment.slice(2, -2) : segment,
+          isBold,
+        };
+      });
+
+      const tokens = segments.flatMap((segment) =>
+        segment.text.split(/(\s+)/).filter(Boolean).map((textPart) => ({
+          text: textPart,
+          isBold: segment.isBold,
+        }))
+      );
+
+      let line: typeof tokens = [];
+      let lineWidth = 0;
+      const lines: typeof tokens[] = [];
+
+      tokens.forEach((token) => {
+        doc.setFontSize(fontSize);
+        doc.setFont("helvetica", token.isBold ? "bold" : "normal");
+        const tokenWidth = doc.getTextWidth(token.text);
+
+        if (line.length > 0 && lineWidth + tokenWidth > contentWidth) {
+          lines.push(line);
+          line = token.text.trim() ? [token] : [];
+          lineWidth = token.text.trim() ? tokenWidth : 0;
+        } else {
+          line.push(token);
+          lineWidth += tokenWidth;
+        }
+      });
+
+      if (line.length > 0) {
+        lines.push(line);
+      }
+
+      lines.forEach((lineTokens) => {
+        if (yPosition > 270) {
+          doc.addPage();
+          yPosition = 20;
+        }
+
+        let xPosition = margin;
+        lineTokens.forEach((token) => {
+          doc.setFontSize(fontSize);
+          doc.setFont("helvetica", token.isBold ? "bold" : "normal");
+          doc.text(token.text, xPosition, yPosition);
+          xPosition += doc.getTextWidth(token.text);
+        });
+        yPosition += fontSize * 0.6;
+      });
+
+      yPosition += 3;
     };
 
     doc.setFontSize(18);
@@ -145,15 +202,15 @@ export const downloadPreviewData = (uploadedFile: UploadedFile) => {
       paragraphs.forEach((paragraph) => {
         if (paragraph.trim()) {
           if (paragraph.startsWith("•")) {
-            addText(paragraph, 10, false);
+            addMarkdownText(paragraph, 10);
           } else if (
             paragraph.toLowerCase().includes("strengths") ||
             paragraph.toLowerCase().includes("weaknesses") ||
             paragraph.toLowerCase().includes("recommendation")
           ) {
-            addText(paragraph, 11, true);
+            addMarkdownText(paragraph, 11);
           } else {
-            addText(paragraph, 10, false);
+            addMarkdownText(paragraph, 10);
           }
         }
       });
