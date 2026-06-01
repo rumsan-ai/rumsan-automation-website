@@ -42,10 +42,10 @@ export default function AIQuizPage() {
 
             <main className="flex-1 container mx-auto px-4 py-4 max-w-3xl">
                 <div className="mb-6 text-center">
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight mb-2 bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                    <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight mb-1 sm:mb-2 leading-snug sm:leading-tight bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                         AI Powered Digital Literacy For Rahat
                     </h1>
-                    <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
+                    <p className="text-[9px] sm:text-xs md:text-base text-muted-foreground max-w-xl mx-auto leading-tight sm:leading-relaxed">
                         Transform your documents into interactive quizzes using advanced AI.
                     </p>
                 </div>

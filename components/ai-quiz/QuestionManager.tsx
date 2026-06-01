@@ -33,12 +33,23 @@ export function QuestionManager({ quiz, onBack }: QuestionManagerProps) {
     const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy')
 
     // Fetch questions for the quiz
-    const { data: questions = [], isLoading, refetch } = useQuestions(quiz.id, {
+    const { data: questionsRaw = [], isLoading, refetch } = useQuestions(quiz.id, {
         documentId: quiz.document_id,
         page: 1,
         limit: 20,
         difficulty: difficulty
     })
+    // Shuffle and display up to 10 random questions
+    function shuffleArray<T>(array: T[]): T[] {
+        return array
+            .map((value) => ({ value, sort: Math.random() }))
+            .sort((left, right) => left.sort - right.sort)
+            .map(({ value }) => value);
+    }
+
+    const questions = React.useMemo(() => {
+        return shuffleArray(questionsRaw).slice(0, 10);
+    }, [questionsRaw]);
     
     const { mutate: updateQuestion, isPending: updating } = useUpdateQuestion()
     const { mutate: deleteQuestion } = useDeleteQuestion()

@@ -56,6 +56,33 @@ export function useHealthStatus() {
           setDynamicStatuses(prev => ({ ...prev, 'vox-flow': 'outage' }));
         }
       }
+
+      // Ollama Health Check for chatbot/AI workflows
+      if (URLS.OLLAMA_ENDPOINT) {
+        try {
+          const ollamaRes = await fetch(URLS.OLLAMA_ENDPOINT, {
+            headers: { 'accept': 'application/json' }
+          });
+
+          setDynamicStatuses(prev => ({
+            ...prev,
+            'telegram-integration': ollamaRes.ok ? 'operational' : 'outage',
+            'discord-integration': ollamaRes.ok ? 'operational' : 'outage',
+            'invoice-validation': ollamaRes.ok ? 'operational' : 'outage',
+            'cv-evaluation': ollamaRes.ok ? 'operational' : 'outage',
+            'askbhunte': ollamaRes.ok ? 'operational' : 'outage'
+          }));
+        } catch (error) {
+          setDynamicStatuses(prev => ({
+            ...prev,
+            'telegram-integration': 'outage',
+            'discord-integration': 'outage',
+            'invoice-validation': 'outage',
+            'cv-evaluation': 'outage',
+            'askbhunte': 'outage'
+          }));
+        }
+      }
     };
 
     fetchStatuses();
