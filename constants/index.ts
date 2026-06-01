@@ -5,6 +5,7 @@ const discordURL = process.env.NEXT_PUBLIC_DISCORD_URL;
 const telegramURL = process.env.NEXT_PUBLIC_TELEGRAM_URL;
 const communityToolURL = process.env.NEXT_PUBLIC_COMMUNITY_TOOL;
 const aiQuizURL = process.env.NEXT_PUBLIC_AI_QUIZ;
+const ollamaEndpoint = process.env.OLLAMA_ENDPOINT;
 
 
 export const URLS = {
@@ -15,6 +16,7 @@ export const URLS = {
   VOX_FLOW: voxBaseURL,
   AI_QUIZ: aiQuizURL,
   COMMUNITY_TOOL: communityToolURL,
+  OLLAMA_ENDPOINT: ollamaEndpoint,
 };
 
 export const PAGES = {
