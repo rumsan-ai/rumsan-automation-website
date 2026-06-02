@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { URLS } from "@/constants";
 
 export function useHealthStatus() {
-  const [dynamicStatuses, setDynamicStatuses] = useState<Record<string, string>>({});
+  const [dynamicStatuses, setDynamicStatuses] = useState<
+    Record<string, string>
+  >({});
+  const ollamaFetched = useRef(false); 
 
   useEffect(() => {
     const fetchStatuses = async () => {
@@ -12,15 +15,21 @@ export function useHealthStatus() {
       if (URLS.COMMUNITY_TOOL) {
         try {
           const communityRes = await fetch(`${URLS.COMMUNITY_TOOL}/health`, {
-            headers: { 'accept': 'application/json' }
+            headers: { accept: "application/json" },
           });
-          const communityData = await communityRes.json() as { status: string };
-          setDynamicStatuses(prev => ({
+          const communityData = (await communityRes.json()) as {
+            status: string;
+          };
+          setDynamicStatuses((prev) => ({
             ...prev,
-            'community-tool': communityData.status === 'healthy' ? 'operational' : 'outage'
+            "community-tool":
+              communityData.status === "healthy" ? "operational" : "outage",
           }));
         } catch (error) {
-          setDynamicStatuses(prev => ({ ...prev, 'community-tool': 'outage' }));
+          setDynamicStatuses((prev) => ({
+            ...prev,
+            "community-tool": "outage",
+          }));
         }
       }
 
@@ -46,47 +55,49 @@ export function useHealthStatus() {
       if (URLS.VOX_FLOW) {
         try {
           const voxRes = await fetch(`${URLS.VOX_FLOW}/docs`, {
-            headers: { 'accept': 'application/json' }
+            headers: { accept: "application/json" },
           });
-          setDynamicStatuses(prev => ({
+          setDynamicStatuses((prev) => ({
             ...prev,
-            'vox-flow': voxRes.ok ? 'operational' : 'outage'
+            "vox-flow": voxRes.ok ? "operational" : "outage",
           }));
         } catch (error) {
-          setDynamicStatuses(prev => ({ ...prev, 'vox-flow': 'outage' }));
+          setDynamicStatuses((prev) => ({ ...prev, "vox-flow": "outage" }));
         }
       }
 
-      // Ollama Health Check for chatbot/AI workflows
-      if (URLS.OLLAMA_ENDPOINT) {
+      // Ollama (only change: run once)
+      if (URLS.OLLAMA_ENDPOINT && !ollamaFetched.current) {
+        ollamaFetched.current = true;
+
         try {
           const ollamaRes = await fetch(URLS.OLLAMA_ENDPOINT, {
-            headers: { 'accept': 'application/json' }
+            headers: { accept: "application/json" },
           });
 
-          setDynamicStatuses(prev => ({
+          setDynamicStatuses((prev) => ({
             ...prev,
-            'telegram-integration': ollamaRes.ok ? 'operational' : 'outage',
-            'discord-integration': ollamaRes.ok ? 'operational' : 'outage',
-            'invoice-validation': ollamaRes.ok ? 'operational' : 'outage',
-            'cv-evaluation': ollamaRes.ok ? 'operational' : 'outage',
-            'askbhunte': ollamaRes.ok ? 'operational' : 'outage'
+            "telegram-integration": ollamaRes.ok ? "operational" : "outage",
+            "discord-integration": ollamaRes.ok ? "operational" : "outage",
+            "invoice-validation": ollamaRes.ok ? "operational" : "outage",
+            "cv-evaluation": ollamaRes.ok ? "operational" : "outage",
+            askbhunte: ollamaRes.ok ? "operational" : "outage",
           }));
         } catch (error) {
-          setDynamicStatuses(prev => ({
+          setDynamicStatuses((prev) => ({
             ...prev,
-            'telegram-integration': 'outage',
-            'discord-integration': 'outage',
-            'invoice-validation': 'outage',
-            'cv-evaluation': 'outage',
-            'askbhunte': 'outage'
+            "telegram-integration": "outage",
+            "discord-integration": "outage",
+            "invoice-validation": "outage",
+            "cv-evaluation": "outage",
+            askbhunte: "outage",
           }));
         }
       }
     };
 
     fetchStatuses();
-    const interval = setInterval(fetchStatuses, 5 * 60 * 1000);
+    const interval = setInterval(fetchStatuses, 2 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 

@@ -18,7 +18,8 @@
     "NEXT_PUBLIC_TELEGRAM_URL": "https://t.me/aurora_raktim_bot",
     "NEXT_PUBLIC_VOX_API": "https://voxflow.askbhunte.com",
     "NEXT_PUBLIC_COMMUNITY_TOOL": "https://ct-api.askbhunte.com",
-    "NEXT_PUBLIC_AI_QUIZ": "https://quiz-api.askbhunte.com"
+    "NEXT_PUBLIC_AI_QUIZ": "https://quiz-api.askbhunte.com",
+    "OLLAMA_ENDPOINT": "https://jo3m4y06rnnwhaz.askbhunte.com"
   },
   "observability": {
     "enabled": true,
